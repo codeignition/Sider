@@ -1,4 +1,4 @@
-Sedir
+Sider
 =====
 
-Web Ui for sedir
+Web Ui for sider
