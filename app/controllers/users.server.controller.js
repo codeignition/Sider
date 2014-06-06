@@ -50,6 +50,7 @@ exports.signup = function(req, res) {
 	// Then save the user 
 	user.save(function(err) {
 		if (err) {
+			console.log(getErrorMessage(err));
 			return res.send(400, {
 				message: getErrorMessage(err)
 			});
