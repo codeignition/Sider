@@ -12,15 +12,26 @@
                     </div>
                 </div>
                  <div class="form-group">
-                    <label class="control-label" for="dbpath">Path to your Redis Database</label>
+                    <label class="control-label" for="host">Host address to your Redis Database</label>
                     <div class="controls">
 			    
-                        <input type="text" data-ng-model="dbpath" id="dbpath" class="form-control" placeholder="Path to your Redis database" required>
+                        <input type="text" data-ng-model="host" id="host" class="form-control" placeholder="Host ip to your Redis database" required>
                 	
-			<input type="file" id="file" />{{file}}
+			
 		    </div>
                 </div>
-               	
+               
+		<div class="form-group">
+                    <label class="control-label" for="portno">port no on which your Redis is running</label>
+                    <div class="controls">
+			    
+                        <input type="text" data-ng-model="portno" id="portno" class="form-control" placeholder="Path to your Redis database" required>
+                	
+			
+		    </div>
+                </div>
+ 
+
 		<div class="form-group">
                     <input type="submit" class="btn btn-default">
                 </div>

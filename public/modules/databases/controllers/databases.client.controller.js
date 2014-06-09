@@ -10,7 +10,8 @@ angular.module('databases').controller('DatabasesController', ['$scope', '$state
 			// Create new Database object
 			var database = new Databases ({
 				name: this.name,
-			    	dbpath: this.dbpath
+			    	host: this.host,
+			    	port:this.portno
 			});
 
 			// Redirect after save

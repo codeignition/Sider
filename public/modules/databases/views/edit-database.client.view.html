@@ -12,6 +12,19 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label class="control-label" for="host">Host address</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="database.host" id="host" class="form-control" placeholder="Host address to your Redis database" required>
+                    </div>
+                </div>
+ 		 <div class="form-group">
+                    <label class="control-label" for="portno">Port No on which your Redis is running</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="database.port" id="portno" class="form-control" placeholder="Port no to your redis database" required>
+                    </div>
+                </div>
+
+	       	<div class="form-group">
                     <input type="submit" value="Update" class="btn btn-default">
                 </div>
 				<div data-ng-show="error" class="text-danger">

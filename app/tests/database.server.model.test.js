@@ -30,6 +30,8 @@ describe('Database Model Unit Tests:', function() {
 		user.save(function() { 
 			database = new Database({
 				name: 'Database Name',
+				 host:'host',
+				 port:'port',
 				user: user
 			});
 
@@ -47,6 +49,22 @@ describe('Database Model Unit Tests:', function() {
 
 		it('should be able to show an error when try to save without name', function(done) { 
 			database.name = '';
+
+			return database.save(function(err) {
+				should.exist(err);
+				done();
+			});
+		});
+	it('should be able to show an error when try to save without host', function(done) { 
+			database.host = '';
+
+			return database.save(function(err) {
+				should.exist(err);
+				done();
+			});
+		});
+it('should be able to show an error when try to save without port', function(done) { 
+			database.port = '';
 
 			return database.save(function(err) {
 				should.exist(err);

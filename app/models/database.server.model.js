@@ -16,9 +16,13 @@ var DatabaseSchema = new Schema({
 		required: 'Please fill Database name',
 		trim: true
 	},
-    	dbpath: {
+    	host: {
     		type: String,
-    		required: 'Please provide path to your Redis database'
+    		required: 'Please provide host ip to your Redis database'
+    	},
+    	port: {
+    	type : String,
+    	required : 'Please provide port'
     	},
     	created: {
 		type: Date,
