@@ -53,7 +53,10 @@
 		it('$scope.find() should create an array with at least one Database object fetched from XHR', inject(function(Databases) {
 			// Create sample Database using the Databases service
 			var sampleDatabase = new Databases({
-				name: 'New Database'
+				name: 'New Database',
+			    	host: 'New Host',
+			    	port: 'New Port'
+				
 			});
 
 			// Create a sample Databases array that includes the new Database
@@ -73,8 +76,10 @@
 		it('$scope.findOne() should create an array with one Database object fetched from XHR using a databaseId URL parameter', inject(function(Databases) {
 			// Define a sample Database object
 			var sampleDatabase = new Databases({
-				name: 'New Database'
-			});
+				name: 'New Database',
+			    	host: 'New Host',
+			    	port: 'New Port'
+});
 
 			// Set the URL parameter
 			$stateParams.databaseId = '525a8422f6d0f87f0e407a33';
@@ -93,17 +98,23 @@
 		it('$scope.create() with valid form data should send a POST request with the form input values and then locate to new object URL', inject(function(Databases) {
 			// Create a sample Database object
 			var sampleDatabasePostData = new Databases({
-				name: 'New Database'
-			});
+				name: 'New Database',
+			    	host: 'New Host',
+			    	port: 'New Port'
+});
 
 			// Create a sample Database response
 			var sampleDatabaseResponse = new Databases({
 				_id: '525cf20451979dea2c000001',
-				name: 'New Database'
-			});
+				name: 'New Database',
+			    	host: 'New Host',
+			    	port: 'New Port'
+});
 
 			// Fixture mock form input values
 			scope.name = 'New Database';
+			    	scope.host= 'New Host';
+			    	scope.port= 'New Port';
 
 			// Set POST response
 			$httpBackend.expectPOST('databases', sampleDatabasePostData).respond(sampleDatabaseResponse);
@@ -114,6 +125,10 @@
 
 			// Test form inputs are reset
 			expect(scope.name).toEqual('');
+			expect(scope.host).toEqual('');
+			expect(scope.port).toEqual('');
+
+
 
 			// Test URL redirection after the Database was created
 			expect($location.path()).toBe('/databases/' + sampleDatabaseResponse._id);
@@ -123,8 +138,10 @@
 			// Define a sample Database put data
 			var sampleDatabasePutData = new Databases({
 				_id: '525cf20451979dea2c000001',
-				name: 'New Database'
-			});
+				name: 'New Database',
+			    	host: 'New Host',
+			    	port: 'New Port'
+		});
 
 			// Mock Database in scope
 			scope.database = sampleDatabasePutData;
