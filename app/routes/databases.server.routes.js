@@ -6,11 +6,11 @@ module.exports = function(app) {
 
 	// Databases Routes
 	app.route('/databases')
-		.get(databases.list)
+		.get(users.requiresLogin, databases.list)
 		.post(users.requiresLogin, databases.create);
 
 	app.route('/databases/:databaseId')
-		.get(databases.read)
+		.get(users.requiresLogin, databases.hasAuthorization, databases.read)
 		.put(users.requiresLogin, databases.hasAuthorization, databases.update)
 		.delete(users.requiresLogin, databases.hasAuthorization, databases.delete);
 

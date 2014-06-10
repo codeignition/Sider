@@ -95,7 +95,7 @@ exports.delete = function(req, res) {
 /**
  * List of Databases
  */
-exports.list = function(req, res) { Database.find().sort('-created').populate('user', 'displayName').exec(function(err, databases) {
+exports.list = function(req, res) { Database.find({user: req.user.id}).sort('-created').populate('user', 'displayName').exec(function(err, databases) {
 		if (err) {
 			return res.send(400, {
 				message: getErrorMessage(err)

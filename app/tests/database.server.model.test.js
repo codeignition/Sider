@@ -72,6 +72,29 @@ it('should be able to show an error when try to save without port', function(don
 			});
 		});
 	});
+	describe('Method Read', function() {
+		//creating a sample user
+		sampleuser = new User({
+			firstName: 'sampleFull',
+			lastName: 'sampleName',
+			displayName: 'sampleFull sampleName',
+			email: 'sampletest@test.com',
+			username: 'sampleusername',
+			password: 'samplepassword'
+		});
+			
+		sampleuser.save(function() { 
+			done();
+		});
+
+
+		it('other user cant read other user stuff', function(done) {
+			return database.save(function(err) {
+				should.not.exist(err);
+				done();
+			});
+		});
+          });
 
 	afterEach(function(done) { 
 		Database.remove().exec();
