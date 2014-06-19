@@ -17,6 +17,10 @@ angular.module('databases').config(['$stateProvider',
 			url: '/databases/:databaseId',
 			templateUrl: 'modules/databases/views/view-database.client.view.html'
 		}).
+		state('infoDatabase', {
+			url: '/databases/:databaseId/info',
+			templateUrl: 'modules/databases/views/info-database.client.view.html'
+		}).
 		state('editDatabase', {
 			url: '/databases/:databaseId/edit',
 			templateUrl: 'modules/databases/views/edit-database.client.view.html'

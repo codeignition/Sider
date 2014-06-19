@@ -25,6 +25,18 @@ angular.module('databases').controller('DatabasesController', ['$scope', '$state
 			this.name = '';
 		};
 
+
+		//Get Redis Info
+		$scope.info =function(){
+			var database=$scope.database;
+			database.$info(function(response) {
+				var dbinfo=response;
+				$location.path('databases/' + database._id+'/info');
+			}, function(errorResponse) {
+				$scope.error = errorResponse.data.message;
+			});
+		};
+
 		// Remove existing Database
 		$scope.remove = function( database ) {
 			if ( database ) { database.$remove();

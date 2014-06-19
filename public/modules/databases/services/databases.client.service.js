@@ -7,7 +7,11 @@ angular.module('databases').factory('Databases', ['$resource',
 		}, {
 			update: {
 				method: 'PUT'
+			},
+			info: {
+				method: 'GET'
 			}
+				
 		});
 	}
 ]);

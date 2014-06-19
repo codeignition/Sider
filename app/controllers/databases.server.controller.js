@@ -5,8 +5,8 @@
  */
 var mongoose = require('mongoose'),
 	Database = mongoose.model('Database'),
-	_ = require('lodash');
-
+	_ = require('lodash'),
+	redis=require('redis');
 /**
  * Get the error message from error object
  */
@@ -52,11 +52,29 @@ exports.create = function(req, res) {
 /**
  * Show the current Database
  */
-exports.read = function(req, res) {
+exports.read = function(req, res, next) {
 	res.jsonp(req.database);
+	next();
+};
+
+//Getting Redis Info
+exports.info = function(req,res){
+	var database = req.database;
+	var redis_client=redis.createClient(database.port, database.host);
+	redis_client.info(function(err,reply) {
+		if (err) {
+			return res.send(400, {
+				message: getErrorMessage(err)
+			});
+		} else {
+			console.log('reply from redis info: ' + reply);
+			res.jsonp(reply);
+		}
+	});
 };
 
 /**
+ *
  * Update a Database
  */
 exports.update = function(req, res) {

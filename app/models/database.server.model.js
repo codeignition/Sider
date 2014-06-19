@@ -21,8 +21,8 @@ var DatabaseSchema = new Schema({
     		required: 'Please provide host ip to your Redis database'
     	},
     	port: {
-    	type : String,
-    	required : 'Please provide port'
+	    	type : String,
+	    	required : 'Please provide port'
     	},
     	created: {
 		type: Date,

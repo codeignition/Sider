@@ -101,7 +101,7 @@
 				name: 'New Database',
 			    	host: 'New Host',
 			    	port: 'New Port'
-});
+			});
 
 			// Create a sample Database response
 			var sampleDatabaseResponse = new Databases({
@@ -109,12 +109,13 @@
 				name: 'New Database',
 			    	host: 'New Host',
 			    	port: 'New Port'
-});
+			});
 
 			// Fixture mock form input values
 			scope.name = 'New Database';
-			    	scope.host= 'New Host';
-			    	scope.port= 'New Port';
+			scope.host= 'New Host';
+			scope.port = 'New Port';
+			    
 
 			// Set POST response
 			$httpBackend.expectPOST('databases', sampleDatabasePostData).respond(sampleDatabaseResponse);
