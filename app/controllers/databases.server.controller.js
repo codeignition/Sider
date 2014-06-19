@@ -1,15 +1,10 @@
 'use strict';
 
-/**
- * Module dependencies.
- */
 var mongoose = require('mongoose'),
 	Database = mongoose.model('Database'),
 	_ = require('lodash'),
 	redis=require('redis');
-/**
- * Get the error message from error object
- */
+
 var getErrorMessage = function(err) {
 	var message = '';
 
@@ -27,13 +22,9 @@ var getErrorMessage = function(err) {
 			if (err.errors[errName].message) message = err.errors[errName].message;
 		}
 	}
-
 	return message;
 };
 
-/**
- * Create a Database
- */
 exports.create = function(req, res) {
 	var database = new Database(req.body);
 	database.user = req.user;
@@ -73,10 +64,6 @@ exports.info = function(req,res){
 	});
 };
 
-/**
- *
- * Update a Database
- */
 exports.update = function(req, res) {
 	var database = req.database ;
 
@@ -93,9 +80,6 @@ exports.update = function(req, res) {
 	});
 };
 
-/**
- * Delete an Database
- */
 exports.delete = function(req, res) {
 	var database = req.database ;
 
@@ -110,9 +94,6 @@ exports.delete = function(req, res) {
 	});
 };
 
-/**
- * List of Databases
- */
 exports.list = function(req, res) { Database.find({user: req.user.id}).sort('-created').populate('user', 'displayName').exec(function(err, databases) {
 		if (err) {
 			return res.send(400, {
@@ -124,9 +105,6 @@ exports.list = function(req, res) { Database.find({user: req.user.id}).sort('-cr
 	});
 };
 
-/**
- * Database middleware
- */
 exports.databaseByID = function(req, res, next, id) { Database.findById(id).populate('user', 'displayName').exec(function(err, database) {
 		if (err) return next(err);
 		if (! database) return next(new Error('Failed to load Database ' + id));
@@ -135,9 +113,6 @@ exports.databaseByID = function(req, res, next, id) { Database.findById(id).popu
 	});
 };
 
-/**
- * Database authorization middleware
- */
 exports.hasAuthorization = function(req, res, next) {
 	if (req.database.user.id !== req.user.id) {
 		return res.send(403, 'User is not authorized');

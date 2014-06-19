@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
-	Schema = mongoose.Schema;
+    Schema = mongoose.Schema;
 
 /**
  * Database Schema
@@ -16,19 +16,20 @@ var DatabaseSchema = new Schema({
 		required: 'Please fill Database name',
 		trim: true
 	},
-    	host: {
-    		type: String,
-    		required: 'Please provide host ip to your Redis database'
-    	},
+	host: {
+		type: String,
+		required: 'Please provide host ip to your Redis database'
+	},
     	port: {
-	    	type : String,
-	    	required : 'Please provide port'
-    	},
-    	created: {
+		type : Number,
+		default: 6379,
+		required : 'Please provide port'
+	},
+	created: {
 		type: Date,
 		default: Date.now
-	},
-	user: {
+   	},
+  	user: {
 		type: Schema.ObjectId,
 		ref: 'User'
 	}
