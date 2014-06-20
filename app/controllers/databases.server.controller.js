@@ -58,7 +58,7 @@ exports.info = function(req,res){
 			});
 		} else {
 			console.log('reply from redis info: ' + reply);
-			res.jsonp(reply);
+//FIXME:		res.jsonp(reply);
 		}
 	});
 };
