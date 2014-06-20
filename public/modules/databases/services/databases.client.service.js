@@ -7,11 +7,19 @@ angular.module('databases').factory('Databases', ['$resource',
 		}, {
 			update: {
 				method: 'PUT'
-			},
+			}
+		});
+	}
+])
+.factory('getinfo', ['$resource',
+	function($resource) {
+		return $resource('databases/:databaseId/info', { databaseId: '@_id'
+		}, {
 			info: {
 				method: 'GET'
 			}
 				
 		});
 	}
-]);
+])
+;
