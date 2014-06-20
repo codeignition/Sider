@@ -43,9 +43,8 @@ exports.create = function(req, res) {
 /**
  * Show the current Database
  */
-exports.read = function(req, res, next) {
+exports.read = function(req, res) {
 	res.jsonp(req.database);
-	next();
 };
 
 //Getting Redis Info

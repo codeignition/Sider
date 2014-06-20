@@ -9,14 +9,13 @@ module.exports = function(app) {
 		.get(users.requiresLogin, databases.list)
 		.post(users.requiresLogin, databases.create);
 
-	app.route('/databases/:databaseId/info')
-		.get(users.requiresLogin, databases.hasAuthorization, databases.info);
-	
-	// Finish by binding the Database middleware
 	app.route('/databases/:databaseId')
 		.get(users.requiresLogin, databases.hasAuthorization, databases.read )
 		.put(users.requiresLogin, databases.hasAuthorization, databases.update)
 		.delete(users.requiresLogin, databases.hasAuthorization, databases.delete);
 
+	app.route('/databases/:databaseId/info')
+		.get(users.requiresLogin, databases.hasAuthorization, databases.info);
+	
 	app.param('databaseId', databases.databaseByID);
 };

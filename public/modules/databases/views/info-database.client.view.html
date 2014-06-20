@@ -2,20 +2,6 @@
 	<div class="page-header">
 		<h1 data-ng-bind="database.name"></h1>
 	</div>
-	<div class="pull-right" data-ng-show="authentication.user._id == database.user._id">
-		<a class="btn btn-primary" href="/#!/databases/{{database._id}}/edit">
-			<i class="glyphicon glyphicon-edit"></i>
-		</a>
-		<a class="btn btn-primary" data-ng-click="remove();">
-			<i class="glyphicon glyphicon-trash"></i>
-		</a>
-		<a class="btn btn-primary" href="/#!/databases/{{database._id}}/info">
-			<i class="glyphicon glyphicon-fire"></i>
-		</a>
-	</div>
-	<div data-ng-init="info()">
-		<p>Redis Info</p>
-	</div>
 	<small>
 		<em class="text-muted">
 			host address
@@ -27,4 +13,8 @@
 			<span data-ng-bind="database.created | date:'mediumDate'"></span>
 		</em>
 	</small>
+	<hr>
+	<section data-ng-init="info()">
+	<h3>Redis Info for "{{database.name}}"</h3>
+	</section>
 </section>
