@@ -9,10 +9,9 @@
 		<a class="btn btn-primary" data-ng-click="remove();">
 			<i class="glyphicon glyphicon-trash"></i>
 		</a>
-		<a class="btn btn-primary" href="/#!/databases/{{database._id}}/info">
-			<i class="glyphicon glyphicon-fire"></i>
-		</a>
 	</div>
+		<h3>Redis Info for "{{database.name}}"</h3>
+    {{redisinfo}}<br/>
 	<small>
 		<em class="text-muted">
 			host address
@@ -24,6 +23,4 @@
 			<span data-ng-bind="database.created | date:'mediumDate'"></span>
 		</em>
 	</small>
-		<h3>Redis Info for "{{database.name}}"</h3>
-		{{redisinfo}}
 </section>
