@@ -7,6 +7,7 @@ Database = mongoose.model('Database'),
 request = require('supertest'),
 passport = require('passport'),
 app = require('../../server.js');
+helpers = ('../test_helper.js');
 
 var user, database;
 
@@ -19,7 +20,7 @@ describe('Database Controller Tests:', function() {
       email: 'test@test.com',
       username: 'username',
       password: 'password',
-			provider: 'local'
+      provider: 'local'
     });
 
     user.save(function(err) {
@@ -42,12 +43,7 @@ describe('Database Controller Tests:', function() {
     });
 
     it('should create a new database', function(done) {
-      var cookie;
-      request(app)
-      .post('/auth/signin')
-      .send({ username: 'username', password: 'password' })
-      .end(function(err,res){
-        cookie = res.headers['set-cookie'];
+      helpers.login(user, function(cookie) {
         request(app)
         .post('/databases')
         .set('cookie', cookie)
@@ -63,9 +59,9 @@ describe('Database Controller Tests:', function() {
     });
   });
 
-    afterEach(function(done) { 
-      Database.remove().exec();
-      User.remove().exec();
-      done();
-    });
+  afterEach(function(done) { 
+    Database.remove().exec();
+    User.remove().exec();
+    done();
   });
+});
