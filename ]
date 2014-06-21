@@ -2,8 +2,9 @@
 
 // Databases controller
 angular.module('databases').controller('DatabasesController', ['$scope', '$stateParams', '$location', 'Authentication','getinfo', 'Databases',
-	function($scope, $stateParams, $location, Authentication, getinfo, Databases) {
+	function($scope, $stateParams, $location, Authentication, Databases ) {
 		$scope.authentication = Authentication;
+
 		// Create new Database
 		$scope.create = function() {
 			// Create new Database object
@@ -27,7 +28,19 @@ angular.module('databases').controller('DatabasesController', ['$scope', '$state
 
 		//Get Redis Info
 		$scope.info =function(){
-			$scope.redisinfo = getinfo.get({
+			var database=$scope.database;
+			var dbinf = 'in info method in public controller';
+			$scope.dbinf=dbinf;
+			var int = 4;
+			$scope.int=int;
+//			database.$info(function(response) {
+//				var dbinfo=response;
+//				$location.path('databases/' + database._id+'/info');
+//			}, function(errorResponse) {
+//				$scope.error = errorResponse.data.message;
+//			});
+			$scope.database = getinfo.get({
+		//		databaseId: 53a32aa27168f0e60e112a68
 				databaseId: $stateParams.databaseId
 			});
 

@@ -44,6 +44,7 @@ exports.create = function(req, res) {
  * Show the current Database
  */
 exports.read = function(req, res) {
+	console.log(req.database);
 	res.jsonp(req.database);
 };
 
@@ -57,6 +58,7 @@ exports.info = function(req,res){
 				message: getErrorMessage(err)
 			});
 		} else {
+			reply=reply+database;
 			console.log('reply from redis info: ' + reply);
 			res.jsonp(reply);
 		}

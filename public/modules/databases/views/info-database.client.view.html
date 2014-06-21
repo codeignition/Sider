@@ -1,4 +1,4 @@
-<section data-ng-controller="DatabasesController" data-ng-init="findOne()">
+<section data-ng-controller="DatabasesController" data-ng-init="info() ">
 	<div class="page-header">
 		<h1 data-ng-bind="database.name"></h1>
 	</div>
@@ -14,7 +14,8 @@
 		</em>
 	</small>
 	<hr>
-	<section data-ng-init="info()">
-	<h3>Redis Info for "{{database.name}}"</h3>
+	<section>
+		<h3>Redis Info for "{{database.name}}"</h3>
+		{{redisinfo}}
 	</section>
 </section>
