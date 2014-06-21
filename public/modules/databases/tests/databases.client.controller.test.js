@@ -129,8 +129,6 @@
       expect(scope.host).toEqual('');
       expect(scope.port).toEqual('');
 
-
-
       // Test URL redirection after the Database was created
       expect($location.path()).toBe('/databases/' + sampleDatabaseResponse._id);
     }));

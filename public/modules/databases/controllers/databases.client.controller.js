@@ -1,31 +1,26 @@
 'use strict';
 
-// Databases controller
 angular.module('databases').controller('DatabasesController', ['$scope', '$stateParams', '$location', 'Authentication','getinfo', 'Databases',
 	function($scope, $stateParams, $location, Authentication, getinfo, Databases) {
 		$scope.authentication = Authentication;
-		// Create new Database
 		$scope.create = function() {
-			// Create new Database object
 			var database = new Databases ({
 				name: this.name,
-			    	host: this.host,
-			    	port:this.portno
+			  host: this.host,
+			  port: this.portno
 			});
 
-			// Redirect after save
 			database.$save(function(response) {
 				$location.path('databases/' + response._id);
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
 			});
 
-			// Clear form fields
 			this.name = '';
+			this.host = '';
+			this.port = '';
 		};
 
-
-		//Get Redis Info
 		$scope.info =function(){
 			$scope.redisinfo = getinfo.get({
 				databaseId: $stateParams.databaseId
@@ -33,7 +28,6 @@ angular.module('databases').controller('DatabasesController', ['$scope', '$state
 
 		};
 
-		// Remove existing Database
 		$scope.remove = function( database ) {
 			if ( database ) { database.$remove();
 
@@ -49,7 +43,6 @@ angular.module('databases').controller('DatabasesController', ['$scope', '$state
 			}
 		};
 
-		// Update existing Database
 		$scope.update = function() {
 			var database = $scope.database ;
 
@@ -60,12 +53,10 @@ angular.module('databases').controller('DatabasesController', ['$scope', '$state
 			});
 		};
 
-		// Find a list of Databases
 		$scope.find = function() {
 			$scope.databases = Databases.query();
 		};
 
-		// Find existing Database
 		$scope.findOne = function() {
 			$scope.database = Databases.get({ 
 				databaseId: $stateParams.databaseId
