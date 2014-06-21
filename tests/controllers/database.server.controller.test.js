@@ -7,7 +7,8 @@ Database = mongoose.model('Database'),
 request = require('supertest'),
 path = require('path'),
 app = require('../../server.js'),
-helpers = require('../test_helper.js');
+helpers = require('../test_helper.js'),
+redis = require('redis');
 
 var user, database;
 
@@ -26,8 +27,8 @@ describe('Database Controller Tests:', function() {
     user.save(function(err) {
       database = new Database({
         name: 'Database Name',
-        host:'host',
-        port: 1000,
+        host:'localhost',
+        port: 6379,
         user: user
       });
       done();
@@ -115,6 +116,22 @@ describe('Database Controller Tests:', function() {
           .get('/databases/' + database._id + '/info')
           .set('cookie',cookie)
           .expect(403, done);
+        });
+      });
+    });
+
+    it('should return redis info', function(done){
+      helpers.login('username', 'password', function(cookie) {
+        request(app)
+        .get('/databases/' + database._id + '/info')
+        .set('cookie',cookie)
+        .expect(200)
+        .end(function(err, res) {
+	        var client = redis.createClient(database.port, database.host)
+          client.info(function() {
+            res.body.process_id.should.equal(client.server_info.process_id);
+            done();
+          });
         });
       });
     });

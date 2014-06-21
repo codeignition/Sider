@@ -40,27 +40,18 @@ exports.create = function(req, res) {
 	});
 };
 
-/**
- * Show the current Database
- */
 exports.read = function(req, res) {
 	console.log(req.database);
 	res.jsonp(req.database);
 };
 
-//Getting Redis Info
 exports.info = function(req,res){
-	var database = req.database;
-	var redis_client=redis.createClient(database.port, database.host);
-	redis_client.info(function(err,reply) {
+	var client = redis.createClient(req.database.port, req.database.host)
+  client.info(function( err, info) {
 		if (err) {
-			return res.send(400, {
-				message: getErrorMessage(err)
-			});
+			return res.send(400, { message: getErrorMessage(err) });
 		} else {
-			reply=reply+database;
-			console.log('reply from redis info: ' + reply);
-			res.jsonp(reply);
+			res.jsonp(client.server_info);
 		}
 	});
 };
