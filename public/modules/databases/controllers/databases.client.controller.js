@@ -21,13 +21,6 @@ angular.module('databases').controller('DatabasesController', ['$scope', '$state
 			this.port = '';
 		};
 
-		$scope.info =function(){
-			$scope.redisinfo = getinfo.get({
-				databaseId: $stateParams.databaseId
-			});
-
-		};
-
 		$scope.remove = function( database ) {
 			if ( database ) { database.$remove();
 
@@ -59,6 +52,10 @@ angular.module('databases').controller('DatabasesController', ['$scope', '$state
 
 		$scope.findOne = function() {
 			$scope.database = Databases.get({ 
+				databaseId: $stateParams.databaseId
+			});
+
+			$scope.redisinfo = getinfo.get({
 				databaseId: $stateParams.databaseId
 			});
 		};
