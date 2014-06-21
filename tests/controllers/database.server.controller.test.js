@@ -59,7 +59,6 @@ describe('Database Controller Tests:', function() {
     });
   });
 
-
   describe('GET /databases', function(){
     it('should require user login', function(done){
       request(app)
@@ -85,6 +84,39 @@ describe('Database Controller Tests:', function() {
     });
 
     xit('should not be able to see databases of other users', function() {
+    });
+  });
+
+  describe('GET /databases/:id/info', function() {
+    beforeEach(function(done) {
+      database.save(done);
+    });
+
+    it('should require user to login', function(done) {
+      request(app)
+      .get('/databases/' + database._id + '/info')
+      .expect(401, done);
+    });
+
+    it('should allow only authurized user', function(done) {
+      var user2 = new User({
+        firstName: 'Full',
+        lastName: 'Name2',
+        displayName: 'Full Name2',
+        email: 'test2@test.com',
+        username: 'username2',
+        password: 'password2',
+        provider: 'local'
+      });
+
+      user2.save(function(err) {
+        helpers.login('username2', 'password2', function(cookie) {
+          request(app)
+          .get('/databases/' + database._id + '/info')
+          .set('cookie',cookie)
+          .expect(403, done);
+        });
+      });
     });
   });
 
