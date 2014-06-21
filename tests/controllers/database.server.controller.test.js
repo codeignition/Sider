@@ -5,9 +5,9 @@ mongoose = require('mongoose'),
 User = mongoose.model('User'),
 Database = mongoose.model('Database'),
 request = require('supertest'),
-passport = require('passport'),
-app = require('../../server.js');
-helpers = ('../test_helper.js');
+path = require('path'),
+app = require('../../server.js'),
+helpers = require('../test_helper.js');
 
 var user, database;
 
@@ -43,7 +43,7 @@ describe('Database Controller Tests:', function() {
     });
 
     it('should create a new database', function(done) {
-      helpers.login(user, function(cookie) {
+      helpers.login('username', 'password', function(cookie) {
         request(app)
         .post('/databases')
         .set('cookie', cookie)

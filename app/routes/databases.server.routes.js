@@ -19,6 +19,5 @@ module.exports = function(app) {
 		.put(users.requiresLogin, databases.hasAuthorization, databases.update)
 		.delete(users.requiresLogin, databases.hasAuthorization, databases.delete);
 
-
 	app.param('databaseId', databases.databaseByID);
 };
