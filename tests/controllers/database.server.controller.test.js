@@ -59,6 +59,35 @@ describe('Database Controller Tests:', function() {
     });
   });
 
+
+  describe('GET /databases', function(){
+    it('should require user login', function(done){
+      request(app)
+      .get('/databases')
+      .expect(401, done);
+    });
+
+    it('should show list of databases of that user', function(done){
+      database.save(function() {
+        helpers.login('username', 'password', function(cookie){
+          request(app)
+          .get('/databases')
+          .set('cookie', cookie)
+          .expect(200)
+          .end(function(err, res){
+            Database.find({ 'user_id' : res.body['user']}, function(err, dbs){
+              dbs[0].name.should.equal(database['name']);
+              done();
+            });
+          });
+        });
+      });
+    });
+
+    xit('should not be able to see databases of other users', function() {
+    });
+  });
+
   afterEach(function(done) { 
     Database.remove().exec();
     User.remove().exec();

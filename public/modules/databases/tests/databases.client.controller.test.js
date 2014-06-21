@@ -1,181 +1,181 @@
 'use strict';
 
 (function() {
-	// Databases Controller Spec
-	describe('Databases Controller Tests', function() {
-		// Initialize global variables
-		var DatabasesController,
-		scope,
-		$httpBackend,
-		$stateParams,
-		$location;
+  // Databases Controller Spec
+  describe('Databases Controller Tests', function() {
+    // Initialize global variables
+    var DatabasesController,
+    scope,
+    $httpBackend,
+    $stateParams,
+    $location;
 
-		// The $resource service augments the response object with methods for updating and deleting the resource.
-		// If we were to use the standard toEqual matcher, our tests would fail because the test values would not match
-		// the responses exactly. To solve the problem, we define a new toEqualData Jasmine matcher.
-		// When the toEqualData matcher compares two objects, it takes only object properties into
-		// account and ignores methods.
-		beforeEach(function() {
-			jasmine.addMatchers({
-				toEqualData: function(util, customEqualityTesters) {
-					return {
-						compare: function(actual, expected) {
-							return {
-								pass: angular.equals(actual, expected)
-							};
-						}
-					};
-				}
-			});
-		});
+    // The $resource service augments the response object with methods for updating and deleting the resource.
+    // If we were to use the standard toEqual matcher, our tests would fail because the test values would not match
+    // the responses exactly. To solve the problem, we define a new toEqualData Jasmine matcher.
+    // When the toEqualData matcher compares two objects, it takes only object properties into
+    // account and ignores methods.
+    beforeEach(function() {
+      jasmine.addMatchers({
+        toEqualData: function(util, customEqualityTesters) {
+          return {
+            compare: function(actual, expected) {
+              return {
+                pass: angular.equals(actual, expected)
+              };
+            }
+          };
+        }
+      });
+    });
 
-		// Then we can start by loading the main application module
-		beforeEach(module(ApplicationConfiguration.applicationModuleName));
+    // Then we can start by loading the main application module
+    beforeEach(module(ApplicationConfiguration.applicationModuleName));
 
-		// The injector ignores leading and trailing underscores here (i.e. _$httpBackend_).
-		// This allows us to inject a service but then attach it to a variable
-		// with the same name as the service.
-		beforeEach(inject(function($controller, $rootScope, _$location_, _$stateParams_, _$httpBackend_) {
-			// Set a new global scope
-			scope = $rootScope.$new();
+    // The injector ignores leading and trailing underscores here (i.e. _$httpBackend_).
+    // This allows us to inject a service but then attach it to a variable
+    // with the same name as the service.
+    beforeEach(inject(function($controller, $rootScope, _$location_, _$stateParams_, _$httpBackend_) {
+      // Set a new global scope
+      scope = $rootScope.$new();
 
-			// Point global variables to injected services
-			$stateParams = _$stateParams_;
-			$httpBackend = _$httpBackend_;
-			$location = _$location_;
+      // Point global variables to injected services
+      $stateParams = _$stateParams_;
+      $httpBackend = _$httpBackend_;
+      $location = _$location_;
 
-			// Initialize the Databases controller.
-			DatabasesController = $controller('DatabasesController', {
-				$scope: scope
-			});
-		}));
+      // Initialize the Databases controller.
+      DatabasesController = $controller('DatabasesController', {
+        $scope: scope
+      });
+    }));
 
-		it('$scope.find() should create an array with at least one Database object fetched from XHR', inject(function(Databases) {
-			// Create sample Database using the Databases service
-			var sampleDatabase = new Databases({
-				name: 'New Database',
-			    	host: 'New Host',
-			    	port: 'New Port'
-				
-			});
+    it('$scope.find() should create an array with at least one Database object fetched from XHR', inject(function(Databases) {
+      // Create sample Database using the Databases service
+      var sampleDatabase = new Databases({
+        name: 'New Database',
+        host: 'New Host',
+        port: 'New Port'
 
-			// Create a sample Databases array that includes the new Database
-			var sampleDatabases = [sampleDatabase];
+      });
 
-			// Set GET response
-			$httpBackend.expectGET('databases').respond(sampleDatabases);
+      // Create a sample Databases array that includes the new Database
+      var sampleDatabases = [sampleDatabase];
 
-			// Run controller functionality
-			scope.find();
-			$httpBackend.flush();
+      // Set GET response
+      $httpBackend.expectGET('databases').respond(sampleDatabases);
 
-			// Test scope value
-			expect(scope.databases).toEqualData(sampleDatabases);
-		}));
+      // Run controller functionality
+      scope.find();
+      $httpBackend.flush();
 
-		it('$scope.findOne() should create an array with one Database object fetched from XHR using a databaseId URL parameter', inject(function(Databases) {
-			// Define a sample Database object
-			var sampleDatabase = new Databases({
-				name: 'New Database',
-			    	host: 'New Host',
-			    	port: 'New Port'
-});
+      // Test scope value
+      expect(scope.databases).toEqualData(sampleDatabases);
+    }));
 
-			// Set the URL parameter
-			$stateParams.databaseId = '525a8422f6d0f87f0e407a33';
+    it('$scope.findOne() should create an array with one Database object fetched from XHR using a databaseId URL parameter', inject(function(Databases) {
+      // Define a sample Database object
+      var sampleDatabase = new Databases({
+        name: 'New Database',
+        host: 'New Host',
+        port: 'New Port'
+      });
 
-			// Set GET response
-			$httpBackend.expectGET(/databases\/([0-9a-fA-F]{24})$/).respond(sampleDatabase);
+      // Set the URL parameter
+      $stateParams.databaseId = '525a8422f6d0f87f0e407a33';
 
-			// Run controller functionality
-			scope.findOne();
-			$httpBackend.flush();
+      // Set GET response
+      $httpBackend.expectGET(/databases\/([0-9a-fA-F]{24})$/).respond(sampleDatabase);
 
-			// Test scope value
-			expect(scope.database).toEqualData(sampleDatabase);
-		}));
+      // Run controller functionality
+      scope.findOne();
+      $httpBackend.flush();
 
-		it('$scope.create() with valid form data should send a POST request with the form input values and then locate to new object URL', inject(function(Databases) {
-			// Create a sample Database object
-			var sampleDatabasePostData = new Databases({
-				name: 'New Database',
-			    	host: 'New Host',
-			    	port: 'New Port'
-			});
+      // Test scope value
+      expect(scope.database).toEqualData(sampleDatabase);
+    }));
 
-			// Create a sample Database response
-			var sampleDatabaseResponse = new Databases({
-				_id: '525cf20451979dea2c000001',
-				name: 'New Database',
-			    	host: 'New Host',
-			    	port: 'New Port'
-			});
+    it('$scope.create() with valid form data should send a POST request with the form input values and then locate to new object URL', inject(function(Databases) {
+      // Create a sample Database object
+      var sampleDatabasePostData = new Databases({
+        name: 'New Database',
+        host: 'New Host',
+        port: 'New Port'
+      });
 
-			// Fixture mock form input values
-			scope.name = 'New Database';
-			scope.host= 'New Host';
-			scope.port = 'New Port';
-			    
+      // Create a sample Database response
+      var sampleDatabaseResponse = new Databases({
+        _id: '525cf20451979dea2c000001',
+        name: 'New Database',
+        host: 'New Host',
+        port: 'New Port'
+      });
 
-			// Set POST response
-			$httpBackend.expectPOST('databases', sampleDatabasePostData).respond(sampleDatabaseResponse);
-
-			// Run controller functionality
-			scope.create();
-			$httpBackend.flush();
-
-			// Test form inputs are reset
-			expect(scope.name).toEqual('');
-			expect(scope.host).toEqual('');
-			expect(scope.port).toEqual('');
+      // Fixture mock form input values
+      scope.name = 'New Database';
+      scope.host = 'New Host';
+      scope.portno = 'New Port';
 
 
+      // Set POST response
+      $httpBackend.expectPOST('databases', sampleDatabasePostData).respond(sampleDatabaseResponse);
 
-			// Test URL redirection after the Database was created
-			expect($location.path()).toBe('/databases/' + sampleDatabaseResponse._id);
-		}));
+      // Run controller functionality
+      scope.create();
+      $httpBackend.flush();
 
-		it('$scope.update() should update a valid Database', inject(function(Databases) {
-			// Define a sample Database put data
-			var sampleDatabasePutData = new Databases({
-				_id: '525cf20451979dea2c000001',
-				name: 'New Database',
-			    	host: 'New Host',
-			    	port: 'New Port'
-		});
+      // Test form inputs are reset
+      expect(scope.name).toEqual('');
+      expect(scope.host).toEqual('');
+      expect(scope.port).toEqual('');
 
-			// Mock Database in scope
-			scope.database = sampleDatabasePutData;
 
-			// Set PUT response
-			$httpBackend.expectPUT(/databases\/([0-9a-fA-F]{24})$/).respond();
 
-			// Run controller functionality
-			scope.update();
-			$httpBackend.flush();
+      // Test URL redirection after the Database was created
+      expect($location.path()).toBe('/databases/' + sampleDatabaseResponse._id);
+    }));
 
-			// Test URL location to new object
-			expect($location.path()).toBe('/databases/' + sampleDatabasePutData._id);
-		}));
+    it('$scope.update() should update a valid Database', inject(function(Databases) {
+      // Define a sample Database put data
+      var sampleDatabasePutData = new Databases({
+        _id: '525cf20451979dea2c000001',
+        name: 'New Database',
+        host: 'New Host',
+        port: 'New Port'
+      });
 
-		it('$scope.remove() should send a DELETE request with a valid databaseId and remove the Database from the scope', inject(function(Databases) {
-			// Create new Database object
-			var sampleDatabase = new Databases({
-				_id: '525a8422f6d0f87f0e407a33'
-			});
+      // Mock Database in scope
+      scope.database = sampleDatabasePutData;
 
-			// Create new Databases array and include the Database
-			scope.databases = [sampleDatabase];
+      // Set PUT response
+      $httpBackend.expectPUT(/databases\/([0-9a-fA-F]{24})$/).respond();
 
-			// Set expected DELETE response
-			$httpBackend.expectDELETE(/databases\/([0-9a-fA-F]{24})$/).respond(204);
+      // Run controller functionality
+      scope.update();
+      $httpBackend.flush();
 
-			// Run controller functionality
-			scope.remove(sampleDatabase);
-			$httpBackend.flush();
+      // Test URL location to new object
+      expect($location.path()).toBe('/databases/' + sampleDatabasePutData._id);
+    }));
 
-			// Test array after successful delete
-			expect(scope.databases.length).toBe(0);
-		}));
-	});
+    it('$scope.remove() should send a DELETE request with a valid databaseId and remove the Database from the scope', inject(function(Databases) {
+      // Create new Database object
+      var sampleDatabase = new Databases({
+        _id: '525a8422f6d0f87f0e407a33'
+      });
+
+      // Create new Databases array and include the Database
+      scope.databases = [sampleDatabase];
+
+      // Set expected DELETE response
+      $httpBackend.expectDELETE(/databases\/([0-9a-fA-F]{24})$/).respond(204);
+
+      // Run controller functionality
+      scope.remove(sampleDatabase);
+      $httpBackend.flush();
+
+      // Test array after successful delete
+      expect(scope.databases.length).toBe(0);
+    }));
+  });
 }());
