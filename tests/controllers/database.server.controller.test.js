@@ -18,10 +18,11 @@ describe('Database Controller Tests:', function() {
       displayName: 'Full Name',
       email: 'test@test.com',
       username: 'username',
-      password: 'password'
+      password: 'password',
+			provider: 'local'
     });
 
-    user.save(function() { 
+    user.save(function(err) {
       database = new Database({
         name: 'Database Name',
         host:'host',
@@ -40,26 +41,31 @@ describe('Database Controller Tests:', function() {
       .expect(401, done);
     });
 
-    xit('should create a new database', function(done) {
+    it('should create a new database', function(done) {
       var cookie;
       request(app)
       .post('/auth/signin')
-      .send({ user: 'username', password: 'password' })
+      .send({ username: 'username', password: 'password' })
       .end(function(err,res){
         cookie = res.headers['set-cookie'];
-        console.log(res.status);
-        console.log(cookie);
         request(app)
         .post('/databases')
         .set('cookie', cookie)
-        .expect(200, done);
+        .send(database)
+        .expect(200)
+        .end(function(err,res){
+          Database.findOne({ '_id' : res.body['_id']}, function(err, db){
+            db.name.should.equal(database['name']);
+            done();
+          });
+        });
       });
     });
   });
 
     afterEach(function(done) { 
-   //   Database.remove().exec();
-    //  User.remove().exec();
+      Database.remove().exec();
+      User.remove().exec();
       done();
     });
   });
