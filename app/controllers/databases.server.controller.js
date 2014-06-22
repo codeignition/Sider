@@ -46,12 +46,27 @@ exports.read = function(req, res) {
 };
 
 exports.info = function(req,res){
-	var client = redis.createClient(req.database.port, req.database.host)
+	var client = redis.createClient(req.database.port, req.database.host);
   client.info(function( err, info) {
 		if (err) {
 			return res.send(400, { message: getErrorMessage(err) });
 		} else {
-			res.jsonp(client.server_info);
+      var  myattr =  _.pick(client.server_info, function(value, key){ return /^db[0-9]*$/.test(key); });
+      var myattr1 = _.pluck(myattr);
+      var i;
+      //var  myattr3 = client.get_dbsize_info;
+      //var str ='';
+      //str += myattr1;
+      //var myattr2 = str.split('=');
+      for(i in myattr1){
+        var str = '';
+        myattr1[i]+=str;
+        str=myattr1[i].split(',');
+        var keystr=str[0].split('=');
+        var keys=parseInt(keystr[1]);
+        console.log(keys);
+      }
+    	res.jsonp(myattr);
 		}
 	});
 };
