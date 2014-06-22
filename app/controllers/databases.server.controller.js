@@ -58,6 +58,8 @@ exports.info = function(req,res){
       //var str ='';
       //str += myattr1;
       //var myattr2 = str.split('=');
+      
+      var keyarray =[];
       for(i in myattr1){
         var str = '';
         myattr1[i]+=str;
@@ -65,8 +67,10 @@ exports.info = function(req,res){
         var keystr=str[0].split('=');
         var keys=parseInt(keystr[1]);
         console.log(keys);
+        keyarray[i]=keys;
+        console.log(keyarray[i]);
       }
-    	res.jsonp(myattr);
+    	res.send(keyarray);
 		}
 	});
 };
