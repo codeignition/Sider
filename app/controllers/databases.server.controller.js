@@ -51,26 +51,14 @@ exports.info = function(req,res){
 		if (err) {
 			return res.send(400, { message: getErrorMessage(err) });
 		} else {
-      var  myattr =  _.pick(client.server_info, function(value, key){ return /^db[0-9]*$/.test(key); });
-      var myattr1 = _.pluck(myattr);
-      var i;
-      //var  myattr3 = client.get_dbsize_info;
-      //var str ='';
-      //str += myattr1;
-      //var myattr2 = str.split('=');
-      
-      var keyarray =[];
-      for(i in myattr1){
-        var str = '';
-        myattr1[i]+=str;
-        str=myattr1[i].split(',');
-        var keystr=str[0].split('=');
-        var keys=parseInt(keystr[1]);
-        console.log(keys);
-        keyarray[i]=keys;
-        console.log(keyarray[i]);
-      }
-    	res.send(keyarray);
+      var myattr =  _.pick(client.server_info, function(value, key){ return /^db[0-9]*$/.test(key); });
+      console.log(_.mapValues(myattr, function(value) {
+        var obj = {};
+        _.each(value.split(','),function(pair){ obj[pair.split('=')[0]] = pair.split('=')[1];  });
+        return obj;
+      }));
+
+    	res.send();
 		}
 	});
 };
