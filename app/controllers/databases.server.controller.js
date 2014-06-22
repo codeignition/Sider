@@ -1,5 +1,6 @@
 'use strict';
 
+
 var mongoose = require('mongoose'),
 	Database = mongoose.model('Database'),
 	_ = require('lodash'),
@@ -52,13 +53,13 @@ exports.info = function(req,res){
 			return res.send(400, { message: getErrorMessage(err) });
 		} else {
       var myattr =  _.pick(client.server_info, function(value, key){ return /^db[0-9]*$/.test(key); });
-      console.log(_.mapValues(myattr, function(value) {
+      var goodlist = _.mapValues(myattr, function(value) {
         var obj = {};
         _.each(value.split(','),function(pair){ obj[pair.split('=')[0]] = pair.split('=')[1];  });
         return obj;
-      }));
-
-    	res.send();
+      });
+      console.log(goodlist.db0.keys);
+    	res.send(goodlist);
 		}
 	});
 };
