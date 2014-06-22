@@ -1,9 +1,7 @@
 'use strict';
 
-//Setting up route
 angular.module('databases').config(['$stateProvider',
 	function($stateProvider) {
-		// Databases state routing
 		$stateProvider.
 		state('listDatabases', {
 			url: '/databases',
@@ -16,10 +14,6 @@ angular.module('databases').config(['$stateProvider',
 		state('viewDatabase', {
 			url: '/databases/:databaseId',
 			templateUrl: 'modules/databases/views/view-database.client.view.html'
-		}).
-		state('infoDatabase', {
-			url: '/databases/:databaseId/info',
-			templateUrl: 'modules/databases/views/info-database.client.view.html'
 		}).
 		state('editDatabase', {
 			url: '/databases/:databaseId/edit',
