@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Raphaël tutorial - Getting Started - Example 1</title>
+<script type="text/javascript" src="raphael.js"></script>
+<script type="text/javascript" src="g.pie-min.js"></script>
+<script type="text/javascript" src="g.raphael-min.js"></script>
+</head>
+<body>
+
+<div id="paper1"></div>
+
+<script type="text/javascript">
+var paper = Raphael("paper1", 1020,1000);
+var rect1 = paper.piechart(320,330,100,[60,56,12],{strokewidth: 1, stroke:'#f0f0f0', colors:["red","blue","green","orange"]
+    , legend: ['shobhit', 'hari', 'ghatak'], legendcolor: '#000000', legendpos: "west"});
+</script>
+
+</body>
+</html>
