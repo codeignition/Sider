@@ -51,7 +51,7 @@ angular.module('databases').controller('DatabasesController', ['$scope', '$state
 		};
 
 		$scope.findOne = function() {
-			$scope.database = Databases.get({ 
+			$scope.database = Databases.get({
 				databaseId: $stateParams.databaseId
 			});
 

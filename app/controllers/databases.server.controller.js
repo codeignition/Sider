@@ -42,7 +42,7 @@ exports.create = function(req, res) {
 };
 
 exports.read = function(req, res) {
-	console.log(req.database);
+	//console.log(req.database);
 	res.jsonp(req.database);
 };
 
@@ -58,7 +58,7 @@ exports.info = function(req,res){
         _.each(value.split(','),function(pair){ obj[pair.split('=')[0]] = pair.split('=')[1];  });
         return obj;
       });
-      console.log(goodlist.db0.keys);
+      //console.log(goodlist.db0.keys);
     	res.send(goodlist);
 		}
 	});

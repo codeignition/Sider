@@ -11,7 +11,10 @@
     </a>
   </div>
   <h3>Redis Info for "{{database.name}}"</h3>
-  {{redisinfo}}<br/>
+  <div ng-repeat="db in redisinfo">
+    {{db.keys}}
+    </div>
+    <br/>
   <small>
     <em class="text-muted">
       host address
