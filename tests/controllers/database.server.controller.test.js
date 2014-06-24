@@ -85,15 +85,40 @@ describe('Database Controller Tests:', function() {
     });
 
     xit('should not be able to see databases of other users', function() {
+      var user2 = new User({
+        firstName: 'Full',
+        lastName: 'Name2',
+        displayName: 'Full Name2',
+        email: 'test2@test.com',
+        username: 'username2',
+        password: 'password2',
+        provider: 'local'
+      });
+
+      database.save();
+
+      user2.save();
+        helpers.login('username2', 'password2', function(cookie) {
+          request(app)
+          .get('/databases')
+          .set('cookie',cookie)
+          .expect(200)
+          .end(function(err, res){
+            Database.find({ 'user2_id' : res.body['user2']}, function(err, dbs){
+              dbs[0].name.should.not.equal(database['name']);
+              done();
+            });
+          });
+        });
+      
     });
   });
 
   describe('GET /databases/:id/info', function() {
-    beforeEach(function(done) {
-      database.save(done);
-    });
+
 
     it('should require user to login', function(done) {
+      database.save();
       request(app)
       .get('/databases/' + database._id + '/info')
       .expect(401, done);
@@ -110,6 +135,8 @@ describe('Database Controller Tests:', function() {
         provider: 'local'
       });
 
+      database.save();
+
       user2.save(function(err) {
         helpers.login('username2', 'password2', function(cookie) {
           request(app)
@@ -120,18 +147,17 @@ describe('Database Controller Tests:', function() {
       });
     });
 
-    it('should return redis info', function(done){
+    it('should return redis db info', function(done){
+      database.save();
+
       helpers.login('username', 'password', function(cookie) {
         request(app)
         .get('/databases/' + database._id + '/info')
         .set('cookie',cookie)
         .expect(200)
         .end(function(err, res) {
-	        var client = redis.createClient(database.port, database.host)
-          client.info(function() {
-            res.body.process_id.should.equal(client.server_info.process_id);
-            done();
-          });
+          if(res.body!==null) JSON.stringify(res.body).should.containDeep('keys');
+          done();
         });
       });
     });
