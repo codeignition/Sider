@@ -106,7 +106,7 @@ exports.list = function(req, res) { Database.find({user: req.user.id}).sort('-cr
 
 exports.databaseByID = function(req, res, next, id) { Database.findById(id).populate('user', 'displayName').exec(function(err, database) {
 		if (err) return next(err);
-		if (! database) return next(new Error('Failed to load Database ' + id));
+		if (! database) return res.send(404);
 		req.database = database ;
 		next();
 	});
