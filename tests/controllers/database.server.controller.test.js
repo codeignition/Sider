@@ -204,6 +204,52 @@ describe('Database Controller Tests:', function() {
     });
   });
 
+  describe('PUT /databases/:id', function() {
+    it('should require user to login', function(done) {
+      database.save();
+      request(app)
+      .put('/databases/' + database._id)
+      .expect(401, done);
+    });
+
+    it('should allow only authurized user', function(done) {
+      var user2 = new User({
+        firstName: 'Full',
+        lastName: 'Name2',
+        displayName: 'Full Name2',
+        email: 'test2@test.com',
+        username: 'username2',
+        password: 'password2',
+        provider: 'local'
+      });
+      database.save();
+      user2.save(function(err) {
+        helpers.login('username2', 'password2', function(cookie) {
+          request(app)
+          .put('/databases/' + database._id)
+          .set('cookie',cookie)
+          .expect(403, done);
+        });
+      });
+    });
+
+    xit('should return update db content', function(done){
+      database.save();
+
+      helpers.login('username', 'password', function(cookie) {
+        request(app)
+        .put('/databases/' + database._id)
+        .set('cookie',cookie)
+        .send(database)
+        .expect(200)
+        .end(function(err, res) {
+          JSON.stringify(res.body._id).should.equal(JSON.stringify(database._id));
+          done();
+        });
+      });
+    });
+  });
+
 
 
   afterEach(function(done) {
