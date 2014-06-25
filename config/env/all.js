@@ -26,9 +26,9 @@ module.exports = {
 				'public/lib/angular-ui-router/release/angular-ui-router.js',
 				'public/lib/angular-ui-utils/ui-utils.js',
 				'public/lib/angular-bootstrap/ui-bootstrap-tpls.js',
-        'public/lib/raphael-pie/raphael.js',
-        'public/lib/raphael-pie/g.raphael-min.js',
-        'public/lib/raphael-pie/g.pie-min.js'
+        'public/lib/raphael/raphael-min.js',
+        'public/lib/raphael/g.raphael-min.js',
+        'public/lib/raphael/g.pie-min.js'
       ]
 		},
 		css: [
