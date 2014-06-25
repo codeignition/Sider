@@ -58,6 +58,11 @@ angular.module('databases').controller('DatabasesController', ['$scope', '$state
 			$scope.redisinfo = getinfo.get({
 				databaseId: $stateParams.databaseId
 			});
+
+      $scope.redisinfo.$promise.then(function(data){
+        angular.forEach($scope.redisinfo, function( value, key ) {
+        });
+      });
 		};
 	}
 ]);
