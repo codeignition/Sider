@@ -59,11 +59,14 @@ angular.module('databases').controller('DatabasesController', ['$scope', '$state
 				databaseId: $stateParams.databaseId
 			});
         $scope.dbarray=[];
+        $scope.dbnames=[];
       $scope.redisinfo.$promise.then(function(data){
         angular.forEach($scope.redisinfo, function( value, key ) {
-          if(value.keys !== undefined )
-          $scope.dbarray.push(parseInt(value.keys));
+          if(value.keys !== undefined && value.keys!==NaN && key!==NaN ){
+            $scope.dbnames.push(key);
+          $scope.dbarray.push(parseInt(value.keys));}
         });
+        
       });
 		};
 	}

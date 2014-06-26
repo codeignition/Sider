@@ -6,17 +6,21 @@ angular.module('databases')
 		var directive = {};
 		directive.restrict = 'E';
 		directive.scope = {
-			info: '=info'
+			info: '=info',
+      names:'=names'
 		}
-		var a=100; 
+		var a=100;
 		directive.link = function (scope, element, attrs) {
-			element = Raphael(200,300,800,800);
+      console.log(scope.info);
+      //x=x/2;
 			scope.$watch( function(){
-				element.piechart(100,100,a,scope.info); //, scope.info.db1.keys]);
+      var x = element.children(0)[0].clientWidth;
+      var ele = Raphael(x/2,x/2,2*x,2*x);
+				ele.piechart(x/4,x/4,x/4,scope.info,{ legend:scope.names}); //, scope.info.db1.keys]);
 			});
 			scope.$on('$destroy',function(){
-				element.remove();
-			});	
+				ele.remove();
+			});
 		}
 
 		return directive;
