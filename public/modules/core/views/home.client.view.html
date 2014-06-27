@@ -2,14 +2,13 @@
 
 	<div class="jumbotron text-center">
 		<div data-ng-show="!authentication.user">
-			<h2>Welcome to Sider!</h2>
-			<h4>We Monitor Your Redis Servers, Signin For Our Services</h4>
+			<h2>Welcome to Sider! We Monitor Your Redis Servers</h2>
 		</div>
 		<div data-ng-show="authentication.user">
 			<h3>Welcome {{authentication.user.displayName}}, Go Ahead, Have Fun!</h3>
-			<a class="btn btn-primary btn-lg" href="/#!/databases/create">Add A New Redis Server</a>
-			<a class="btn btn-primary btn-lg" href="/#!/databases">Check Your Redis Servers</a>
 		</div>		
+		<hr>
+		<a class="btn btn-primary btn-lg" href="/#!/databases/create">Add Your Redis</a>
 	</div>
 	<!--	<div class="jumbotron text-center">
 		<div class="row">
@@ -105,8 +104,8 @@
 	</div>
 	<br>Enjoy &amp; Keep Us Updated,
 	<br>The MEAN.JS Team.
--->
-<!--<section data-ng-controller="DatabasesController" data-ng-init="find()">
+	--><!--
+<section data-ng-controller="DatabasesController" data-ng-show="authentication.user" data-ng-init="find()">
     <div class="page-header">
         <h1>Databases</h1>
     </div>

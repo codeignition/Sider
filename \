@@ -1,0 +1,30 @@
+'use strict';
+
+angular.module('databases')
+.directive('piechart',
+	function(){
+		var directive = {};
+		directive.restrict = 'E';
+		directive.scope = {
+			info: '=info'
+		}
+		directive.link = function (scope, element, attrs) {
+			element = Raphael(0,0,800,800);
+			element.css({
+		//		position:'relative',
+		//		backgroundColor:'grey',
+			//	top:'10px',
+			//	left:'100px'
+			});
+			scope.$watch( function(){
+				element.piechart(100,100,100,scope.info);
+			});
+			scope.$on('$destroy',function(){
+				element.remove();
+			});	
+		}
+
+		return directive;
+
+	}
+);

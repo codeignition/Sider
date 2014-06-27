@@ -1,5 +1,12 @@
 <section data-ng-controller="DatabasesController" data-ng-init="find()">
-  <div class="page-header">
+ <div class="jumbotron text-center">
+	<div data-ng-show="authentication.user">
+		<h3>Welcome {{authentication.user.displayName}}, Go Ahead, Have Fun!</h3>
+	</div>		
+	<hr>
+	<a class="btn btn-primary btn-lg" href="/#!/databases/create">Add Your Redis</a>
+</div>
+	 <div class="page-header">
     <h1>Databases</h1>
   </div>
   <div class="list-group">
