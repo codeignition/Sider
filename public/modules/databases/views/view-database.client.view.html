@@ -6,10 +6,10 @@
     <div class="col-md-4">
       <piechart info="dbarray"  names="dbnames"><div></div></piechart>
     </div>
-        <div class="col-md-4">
-    <h3>Redis Info for "{{database.name}}"</h3>
-    <br/>
-    
+    <div class="col-md-3 col-md-offset-1">
+      <h3>Redis Info for "{{database.name}}"</h3>
+      <br/>
+
       <em class="text-muted">
         host address
         <span data-ng-bind="database.host "></span>
@@ -17,12 +17,12 @@
         <span data-ng-bind="database.port "></span>
         <br>
         <small>
-        Created on
-        <span data-ng-bind="database.created | date:'mediumDate'"></span>
-      </em>
-    </small>
+          Created on
+          <span data-ng-bind="database.created | date:'mediumDate'"></span>
+        </em>
+      </small>
     </div>
-<div class="col-md-4 pull-right" data-ng-show="authentication.user._id === database.user._id">
+    <div class="col-md-3 col-md-offset-1" data-ng-show="authentication.user._id === database.user._id">
       <a class="btn btn-primary" href="/#!/databases/{{database._id}}/edit">
         <i class="glyphicon glyphicon-edit"></i>
       </a>
@@ -30,6 +30,5 @@
         <i class="glyphicon glyphicon-trash"></i>
       </a>
     </div>
-
   </div>
 </section>
