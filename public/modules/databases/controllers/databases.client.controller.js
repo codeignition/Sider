@@ -63,12 +63,6 @@ angular.module('databases').controller('DatabasesController', ['$scope', '$state
                                            $scope.dbnames=[];
                                            $scope.redisinfo.$promise.then(function(data){
                                              angular.forEach($scope.redisinfo, function( value, key ) {
-                                               //Please do not remove the comments
-
-                                               //if(value.keys !== undefined && value.keys!==NaN && key!==NaN ){
-                                               // $scope.dbnames.push(key);
-                                               //$scope.dbarray.push(parseInt(value.keys));}
-
                                                if(/^db[0-9]*$/.test(key)){
                                                  $scope.dbnames.push(key);
                                                  var keyportion=value.split(',');
