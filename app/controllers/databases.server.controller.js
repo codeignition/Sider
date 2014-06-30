@@ -57,6 +57,18 @@ exports.info = function(req,res){
   });
 };
 
+exports.execute = function(req,res){
+  var client = redis.createClient(req.database.port, req.database.host);
+  var command='ping';
+  client.send_command(command,[], function( err, result){
+    if(err){
+      return res.send(400, {message: getErrorMessage(err) });
+    } else {
+      res.json(result);
+    }
+  });
+};
+
 exports.update = function(req, res) {
   var database = req.database ;
 
