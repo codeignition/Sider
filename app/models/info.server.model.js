@@ -16,7 +16,7 @@ var InfoSchema = new Schema({
     required : 'Please tell me about the database'
   },
   content: {
-    type:Schema.Mixed
+    type:Schema.Types.Mixed
   },
   timestamp:{
   type:Date,
