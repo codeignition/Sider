@@ -32,7 +32,11 @@ var DatabaseSchema = new Schema({
   	user: {
 		type: Schema.ObjectId,
 		ref: 'User'
-	}
+	},
+  interval:{
+    type: Number,
+    default : 1000
+  }
 });
 
 mongoose.model('Database', DatabaseSchema);
