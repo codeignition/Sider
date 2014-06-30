@@ -52,14 +52,19 @@ exports.info = function(req,res){
       return res.send(400, { message: getErrorMessage(err) });
     } else {
       var goodlist = client.server_info;
-      //please don't remove the comments
-      //var myattr =  _.pick(client.server_info, function(value, key){ return /^db[0-9]*$/.test(key); });
-      //var goodlist = _.mapValues(myattr, function(value) {
-      //var obj = {};
-      //_.each(value.split(','),function(pair){ obj[pair.split('=')[0]] = pair.split('=')[1];  });
-      //return obj;
-      // });
       res.jsonp(goodlist);
+    }
+  });
+};
+
+exports.execute = function(req,res){
+  var client = redis.createClient(req.database.port, req.database.host);
+  var command='ping';
+  client.send_command(command,[], function( err, result){
+    if(err){
+      return res.send(400, {message: getErrorMessage(err) });
+    } else {
+      res.json(result);
     }
   });
 };
