@@ -38,6 +38,7 @@
 		"grunt-cli": "~0.1.13",
 		"glob": "~3.2.9",
 		"redis" : "*",
+    "node-schedule" : "*",
 		"socket.io" : "*"
 	},
 	"devDependencies": {
