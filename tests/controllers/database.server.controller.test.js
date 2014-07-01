@@ -234,14 +234,14 @@ describe('Database Controller Tests:', function() {
 
     it('should return command result', function(done){
       database.save();
-
       helpers.login('username', 'password', function(cookie) {
         request(app)
         .get('/databases/' + database._id+'/execute')
+        .send({command:'ping'})
         .set('cookie',cookie)
         .expect(200)
         .end(function(err, res) {
-           res.body.should.equal('PONG');
+           res.body.result.should.equal("PONG");
            done();
         });
       });
