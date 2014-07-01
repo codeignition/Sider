@@ -63,7 +63,8 @@ exports.execute = function(req,res){
   }
   else{
     var client = redis.createClient(req.database.port, req.database.host);
-    client.send_command(req.param('command'),[], function( err, result){
+    var command = req.param('command').split(' ');
+    client.send_command(command[0],command.splice(1), function( err, result){
       if(err){
         return res.send(400, {message: getErrorMessage(err) });
       } else {

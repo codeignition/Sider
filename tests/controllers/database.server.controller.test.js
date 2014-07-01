@@ -246,6 +246,37 @@ describe('Database Controller Tests:', function() {
         });
       });
     });
+
+    it('should disable flush commands from redis server', function(done){
+      database.save();
+      helpers.login('username','password',function(cookie) {
+        request(app)
+        .get('/databases/' + database._id+'/execute')
+        .send({command:'flushall'})
+        .set('cookie',cookie)
+        .expect(200)
+        .end(function(err, res) {
+           res.body.result.should.equal("You can not flush db");
+           done();
+        });
+      });
+    });
+
+    it('should handle commands with spaces', function(done){
+      database.save();
+      helpers.login('username','password',function(cookie) {
+        request(app)
+        .get('/databases/' + database._id+'/execute')
+        .send({command:'set foo bar'})
+        .set('cookie',cookie)
+        .expect(200)
+        .end(function(err, res) {
+          should.exist(res.body.result);
+          res.body.result.should.equal('OK');
+          done();
+        });
+      });
+    });
   });
 
 
