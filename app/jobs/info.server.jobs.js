@@ -7,6 +7,9 @@ var dbs, client, info, serverinfo;
 var events = require('events');
 var async = require('async');
 var client, redisinfo, serverinfo, dbs, db;
+
+exports.schedule = "* * * * * *";
+
 var EventEmitter = events.EventEmitter;
 exports.infoEmitter = new EventEmitter();
 
