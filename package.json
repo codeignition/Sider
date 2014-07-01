@@ -39,7 +39,8 @@
 		"glob": "~3.2.9",
 		"redis" : "*",
     "node-schedule" : "*",
-		"socket.io" : "*"
+		"socket.io" : "*",
+    "async":"*"
 	},
 	"devDependencies": {
 		"supertest": "~0.12.1",
