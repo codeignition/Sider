@@ -18,8 +18,8 @@ var express = require('express'),
 	flash = require('connect-flash'),
 	config = require('./config'),
 	consolidate = require('consolidate'),
-	path = require('path');
-
+	path = require('path'),
+  schedule = require('node-schedule');
 module.exports = function(db) {
 	// Initialize express app
 	var app = express();
@@ -115,7 +115,8 @@ module.exports = function(db) {
 	});
 
   config.getGlobbedFiles('./app/jobs/**/*.js').forEach(function(routePath) {
-    require(path.resolve(routePath));
+    var jobs = require(path.resolve(routePath));
+    schedule.scheduleJob(jobs.schedule, jobs.job);
   });
 
 	// Assume 'not found' in the error msgs is a 404. this is somewhat silly, but valid, you can do whatever you like, set properties, use instanceof etc.
