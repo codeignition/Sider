@@ -17,17 +17,7 @@ exports.job = function(){
   database.find()
   .exec(function(err, dbs){
     async.each(dbs, function(db, callback){
-      client = redis.createClient(db.port, db.host);
-      client.info(function(err, redisinfo){
-        var info = new Info({
-          database : db,
-          content : client.server_info
-        });
-        client.quit();
-        info.save(function(err){
-          callback();
-        });
-      });
+      db.getLatestInfo(callback);
     },function(err){
       if (err) console.log(err);
       exports.infoEmitter.emit('jobdone');
