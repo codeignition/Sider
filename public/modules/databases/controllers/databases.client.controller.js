@@ -67,9 +67,7 @@ angular.module('databases').
                    angular.forEach($scope.redisinfo, function( value, key ) {
                      if(/^db[0-9]*$/.test(key)){
                        $scope.dbnames.push(key);
-                       var keyportion=value.split(',');
-                       var keyvalue=keyportion[0].split('=');
-                       $scope.dbarray.push(parseInt(keyvalue[1]));
+                       $scope.dbarray.push($scope.redisinfo[key].keys);
                      }
                    });
                  });
