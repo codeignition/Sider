@@ -28,7 +28,8 @@ module.exports = {
 				'public/lib/angular-bootstrap/ui-bootstrap-tpls.js',
         'public/lib/raphael/raphael-min.js',
         'public/lib/raphael/g.raphael-min.js',
-        'public/lib/raphael/g.pie-min.js'
+        'public/lib/raphael/g.pie-min.js',
+        'public/lib/raphael/g.line-min.js'
       ]
 		},
 		css: [
