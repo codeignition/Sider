@@ -64,11 +64,12 @@ function parseInfo (info) {
         info[key] = dbstring.split(',');
         var keysInfo = info[key][0].split('=');
         var expiresInfo = info[key][1].split('=');
-        var avg_ttlInfo = info[key][2].split('=');
+        var avg_ttlInfo;
+        if(info[key][2])avg_ttlInfo = info[key][2].split('=');
         info[key]={};
         info[key].keys = parseInt(keysInfo[1]);
         info[key].expires = parseInt(expiresInfo[1]);
-        info[key].avg_ttl = parseInt(avg_ttlInfo[1]);
+        if(avg_ttlInfo)info[key].avg_ttl = parseInt(avg_ttlInfo[1]);
       }
     };
   return info;
