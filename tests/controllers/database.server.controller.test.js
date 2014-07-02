@@ -241,8 +241,8 @@ describe('Database Controller Tests:', function() {
         .set('cookie',cookie)
         .expect(200)
         .end(function(err, res) {
-           res.body.result.should.equal("PONG");
-           done();
+          res.body.result.should.equal("PONG");
+          done();
         });
       });
     });
@@ -256,11 +256,27 @@ describe('Database Controller Tests:', function() {
         .set('cookie',cookie)
         .expect(200)
         .end(function(err, res) {
-           res.body.result.should.equal("You can not flush db");
-           done();
+          res.body.result.should.equal("You can not flush db");
+          done();
         });
       });
     });
+
+    it('should disable eval commands from redis server', function(done){
+      database.save();
+      helpers.login('username','password',function(cookie) {
+        request(app)
+        .get('/databases/' + database._id+'/execute')
+        .send({command:'eval'})
+        .set('cookie',cookie)
+        .expect(200)
+        .end(function(err, res) {
+          res.body.result.should.equal("You can not do eval");
+          done();
+        });
+      });
+    });
+
 
     it('should handle commands with spaces', function(done){
       database.save();
@@ -273,6 +289,22 @@ describe('Database Controller Tests:', function() {
         .end(function(err, res) {
           should.exist(res.body.result);
           res.body.result.should.equal('OK');
+          done();
+        });
+      });
+    });
+
+    it('should respond with error message for invalid commands', function(done){
+      database.save();
+      helpers.login('username','password',function(cookie) {
+        request(app)
+        .get('/databases/' + database._id+'/execute')
+        .send({command:'asdfads'})
+        .set('cookie',cookie)
+        .expect(400)
+        .end(function(err, res) {
+          should.exist(res.body.result);
+          res.body.result.should.equal('Invalid Command');
           done();
         });
       });
@@ -367,9 +399,9 @@ describe('Database Controller Tests:', function() {
             //if (db) ;
             if (err) done();
           });
+        });
       });
     });
-  });
   });
 
 

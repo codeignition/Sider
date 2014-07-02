@@ -58,15 +58,21 @@ exports.info = function(req,res){
 };
 
 exports.execute = function(req,res){
-  if(req.param('command')==='flushdb'||req.param('command')==='flushall'){
+  if(/^flush*/.test(req.param('command'))){
     res.json({result:'You can not flush db'});
+  }
+  else if(/^eval*/.test(req.param('command'))){
+    res.json({result: 'You can not do eval'});
   }
   else{
     var client = redis.createClient(req.database.port, req.database.host);
     var command = req.param('command').split(' ');
-    client.send_command(command[0],command.splice(1), function( err, result){
-      if(err){
-        return res.send(400, {message: getErrorMessage(err) });
+    client.send_command(command[0],command.splice(1), function( error, result){
+      if(error){
+
+        console.log(error);
+        res.json(400,{result: error});
+        //        return res.send(400, {result: 'Bad Request' });
       } else {
         res.json({result: result});
       }
