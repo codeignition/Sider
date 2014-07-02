@@ -69,10 +69,7 @@ exports.execute = function(req,res){
     var command = req.param('command').split(' ');
     client.send_command(command[0],command.splice(1), function( error, result){
       if(error){
-
-        console.log(error);
-        res.json(400,{result: error});
-        //        return res.send(400, {result: 'Bad Request' });
+        return res.send(400, {result: 'Invalid Command' });
       } else {
         res.json({result: result});
       }

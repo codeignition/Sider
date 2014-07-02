@@ -79,6 +79,10 @@ angular.module('databases').
                  $scope.commandResponse = executeCommand.get({
                    databaseId: $stateParams.databaseId,
                    command: $scope.userCommand
+                 }, function(){
+                 },function(response){
+                  if(response.status===400)
+                    $scope.commandResponse={result:"Invalid Command"};
                  });
                };
 
