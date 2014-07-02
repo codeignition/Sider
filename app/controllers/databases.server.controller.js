@@ -46,14 +46,9 @@ exports.read = function(req, res) {
 };
 
 exports.info = function(req,res){
-  var client = redis.createClient(req.database.port, req.database.host);
-  client.info(function( err, info) {
-    if (err) {
-      return res.send(400, { message: getErrorMessage(err) });
-    } else {
-      var goodlist = client.server_info;
-      res.jsonp(goodlist);
-    }
+  req.database.getInfo(function(error, data){
+    if (error) return res.send(400, {message : getErrorMessage(err)});
+    else res.jsonp(data.content);
   });
 };
 

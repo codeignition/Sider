@@ -144,7 +144,7 @@ describe('Database Controller Tests:', function() {
       });
     });
 
-    it('should return redis db info', function(done){
+    it('should return redis db info from Info database', function(done){
       database.save();
 
         helpers.login('username', 'password', function(cookie) {
