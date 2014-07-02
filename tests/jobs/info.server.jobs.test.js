@@ -38,6 +38,7 @@ describe('Jobs test', function(){
 
   afterEach(function(done){
     Database.remove().exec();
+    Info.remove().exec();
     done();
   });
 });

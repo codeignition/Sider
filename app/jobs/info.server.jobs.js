@@ -17,7 +17,7 @@ exports.job = function(){
   database.find()
   .exec(function(err, dbs){
     async.each(dbs, function(db, callback){
-      db.getLatestInfo(callback);
+      db.fetchInfoFromClient(callback);
     },function(err){
       if (err) console.log(err);
       exports.infoEmitter.emit('jobdone');

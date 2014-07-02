@@ -4,6 +4,7 @@ var should = require('should'),
 mongoose = require('mongoose'),
 User = mongoose.model('User'),
 Database = mongoose.model('Database'),
+Info = mongoose.model('Info'),
 request = require('supertest'),
 path = require('path'),
 app = require('../../server.js'),
@@ -146,16 +147,16 @@ describe('Database Controller Tests:', function() {
     it('should return redis db info', function(done){
       database.save();
 
-      helpers.login('username', 'password', function(cookie) {
-        request(app)
-        .get('/databases/' + database._id + '/info')
-        .set('cookie',cookie)
-        .expect(200)
-        .end(function(err, res) {
-          if(res.body!==null) JSON.stringify(res.body).should.containDeep('keys');
-          done();
+        helpers.login('username', 'password', function(cookie) {
+          request(app)
+          .get('/databases/' + database._id + '/info')
+          .set('cookie',cookie)
+          .expect(200)
+          .end(function(err, res) {
+            if(res.body!==null) JSON.stringify(res.body).should.containDeep('keys');
+            done();
+          });
         });
-      });
     });
   });
 
@@ -409,6 +410,7 @@ describe('Database Controller Tests:', function() {
   afterEach(function(done) {
     Database.remove().exec();
     User.remove().exec();
+    Info.remove().exec();
     done();
   });
 });

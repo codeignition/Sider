@@ -14,6 +14,7 @@ Database = mongoose.model('Database');
  * Globals
  */
 var user, database;
+var database1;
 
 /**
  * Unit tests
@@ -77,8 +78,8 @@ describe('Database Model Unit Tests:', function() {
     });
   });
 
-  describe('database#getLatestInfo',function(){
-    it('should create database info', function(done){
+  describe('#fetchInfoFromClient',function(){
+    it('should fetch info from redis and save as Info model', function(done){
       var database1 = new Database({
         name:'name',
         port:6379,
@@ -86,7 +87,7 @@ describe('Database Model Unit Tests:', function() {
       });
       database1.save(function(){
         var client = redis.createClient(database1.port, database1.host);
-        database1.getLatestInfo(function(err, info){
+        database1.fetchInfoFromClient(function(err, info){
           client.info(function(){
             var process_id = client.server_info.process_id;
             (info.content.process_id).should.equal(process_id);
@@ -95,8 +96,6 @@ describe('Database Model Unit Tests:', function() {
               for (var i in info.content){
                 if(/^db[0-9]*$/.test(i)){
                   info.content[i].keys.should.be.a.Number;
-                  info.content[i].expires.should.be.a.Number;
-                  info.content[i].avg_ttl.should.be.a.Number;
                 }
               };
               client.quit();
@@ -107,6 +106,44 @@ describe('Database Model Unit Tests:', function() {
       });
     });
   });
+
+  describe('#getInfo',function(){
+    beforeEach(function(done){
+      database1 = new Database({
+        name:'name',
+        port:6379,
+        host:'localhost'
+      });
+      database1.save(function(){
+        done();
+      });
+    });
+
+    it('should fetch and save info from client if no info exists', function(done){
+      database1.getInfo(function(err, info){
+        Info.count({}, function(err, data){
+          data.should.equal(1);
+          Info.find({database : database1._id}).exec(function(err, infoFromDatabase){
+            (info.content.process_id).should.equal(info.content.process_id);
+            done();
+          })
+        });
+      });
+    });
+
+    it('should fetch info from database if info exists', function(done){
+      database1.fetchInfoFromClient(function(error, infoFromClient){
+        database1.getInfo(function(err, info){
+          Info.count({}, function(err, data){
+            data.should.equal(1);
+            (infoFromClient.content.process_id).should.equal(info.content.process_id);
+            done();
+          });
+        });
+      });
+    });
+  });
+
 
   afterEach(function(done) {
     Database.remove().exec();
