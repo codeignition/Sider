@@ -147,16 +147,16 @@ describe('Database Controller Tests:', function() {
     it('should return redis db info from Info database', function(done){
       database.save();
 
-        helpers.login('username', 'password', function(cookie) {
-          request(app)
-          .get('/databases/' + database._id + '/info')
-          .set('cookie',cookie)
-          .expect(200)
-          .end(function(err, res) {
-            if(res.body!==null) JSON.stringify(res.body).should.containDeep('keys');
-            done();
-          });
+      helpers.login('username', 'password', function(cookie) {
+        request(app)
+        .get('/databases/' + database._id + '/info')
+        .set('cookie',cookie)
+        .expect(200)
+        .end(function(err, res) {
+          if(res.body!==null) JSON.stringify(res.body).should.containDeep('keys');
+          done();
         });
+      });
     });
   });
 
@@ -399,6 +399,52 @@ describe('Database Controller Tests:', function() {
           Database.findOne({ '_id' : database._id}, function(err, db){
             //if (db) ;
             if (err) done();
+          });
+        });
+      });
+    });
+  });
+
+  describe('GET /databases/:id/infos', function(){
+    it('should require user login', function(done){
+      database.save();
+      request(app)
+      .get('/databases/' + database._id +'/infos')
+      .expect(401, done);
+    });
+
+    it('should allow only authorized user', function(done){
+      var user2 = new User({
+        firstName: 'Full',
+        lastName: 'Name2',
+        displayName: 'Full Name2',
+        email: 'test2@test.com',
+        username: 'username2',
+        password: 'password2',
+        provider: 'local'
+      });
+      database.save();
+      user2.save(function(err) {
+        helpers.login('username2', 'password2', function(cookie) {
+          request(app)
+          .get('/databases/' + database._id+'/infos')
+          .set('cookie',cookie)
+          .expect(403, done);
+        });
+      });
+    });
+    it('should give the info-db of req database', function(done){
+      database.save(function(){
+        helpers.login('username', 'password', function(cookie) {
+          request(app)
+          .get('/databases/' + database._id+ '/infos')
+          .set('cookie',cookie)
+          .end(function(err, res){
+            Info.find({database : database._id}).sort('-timestamp').limit(10)
+            .exec(function(error, data){
+              data.should.eql(res.body);
+              done();
+            });
           });
         });
       });

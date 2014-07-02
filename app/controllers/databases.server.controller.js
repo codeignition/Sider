@@ -3,6 +3,7 @@
 
 var mongoose = require('mongoose'),
 Database = mongoose.model('Database'),
+Info = mongoose.model('Info'),
 _ = require('lodash'),
 redis=require('redis');
 
@@ -47,8 +48,16 @@ exports.read = function(req, res) {
 
 exports.info = function(req,res){
   req.database.getInfo(function(error, data){
-    if (error) return res.send(400, {message : getErrorMessage(err)});
+    if (error) return res.send(400, {message : getErrorMessage(error)});
     else res.jsonp(data.content);
+  });
+};
+
+exports.infos = function(req, res){
+  Info.find({database : req.database._id}).sort('-timestamp').limit(10)
+  .exec(function(error, data){
+    if(error) return res.send(400, {message : getErrorMessage(error)});
+    else res.jsonp(data);
   });
 };
 
