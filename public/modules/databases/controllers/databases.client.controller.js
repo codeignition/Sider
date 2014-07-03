@@ -2,7 +2,7 @@
 
 angular.module('databases').
   controller('DatabasesController',['$scope', '$stateParams', '$location', 'Authentication','getinfo', 'infoDatabase' , 'getCurrentCollection', 'executeCommand', 'Databases',
-             function($scope, $stateParams, $location, Authentication, getinfo, getCurrentCollection, executeCommand, infoDatabase, Databases) {
+             function($scope, $stateParams, $location, Authentication, getinfo, infoDatabase,  getCurrentCollection, executeCommand, Databases) {
                $scope.authentication = Authentication;
                $scope.create = function() {
                  var database = new Databases ({
@@ -94,6 +94,7 @@ angular.module('databases').
                };
 
                $scope.userConsole = function(){
+                 console.log('here');
                  $scope.commandResponse = executeCommand.get({
                    databaseId: $stateParams.databaseId,
                    command: $scope.userCommand
