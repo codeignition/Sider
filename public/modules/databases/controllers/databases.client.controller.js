@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('databases').
-  controller('DatabasesController',['$scope', '$stateParams', '$location', 'Authentication','getinfo','executeCommand', 'Databases',
-             function($scope, $stateParams, $location, Authentication, getinfo, executeCommand, Databases) {
+  controller('DatabasesController',['$scope', '$stateParams', '$location', 'Authentication','getinfo', 'getCurrentCollection', 'executeCommand', 'Databases',
+             function($scope, $stateParams, $location, Authentication, getinfo, getCurrentCollection, executeCommand, Databases) {
                $scope.authentication = Authentication;
                $scope.create = function() {
                  var database = new Databases ({
@@ -56,6 +56,10 @@ angular.module('databases').
                    databaseId: $stateParams.databaseId
                  });
 
+                 $scope.consoledb = getCurrentCollection.get({
+                  databaseId: $stateParams.databaseId
+                 });
+
                  $scope.redisinfo = getinfo.get({
                    databaseId: $stateParams.databaseId
                  });
@@ -78,10 +82,12 @@ angular.module('databases').
                    databaseId: $stateParams.databaseId,
                    command: $scope.userCommand
                  }, function(){
+                   $scope.consoledb.workingdb = $scope.commandResponse.workingdb;
                  },function(response){
                   if(response.status===400)
                     $scope.commandResponse={result:"Invalid Command"};
                  });
+                 this.userCommand='';
                };
 
 

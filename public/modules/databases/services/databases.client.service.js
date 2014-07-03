@@ -22,6 +22,16 @@ angular.module('databases')
            });
          }
 ])
+.factory('getCurrentCollection', ['$resource',
+        function($resource) {
+          return $resource('databases/:databaseId/currentCollection',{ databaseId: '@_id'
+          }, {
+            currentCollection: {
+              method: 'GET'
+            }
+          });
+        }
+])
 .factory('executeCommand',['$resource',
          function($resource){
            return $resource('databases/:databaseId/execute',{databaseId: '@_id'

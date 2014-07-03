@@ -79,7 +79,7 @@ function parseInfo (info) {
           info[key][dbparam[0]]=parseInt(dbparam[1]);
         }
       }
-    };
+    }
   return info;
 }
 
