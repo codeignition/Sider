@@ -11,6 +11,9 @@ module.exports = function(app) {
 	app.route('/databases/:databaseId/info')
 		.get(users.requiresLogin, databases.hasAuthorization, databases.info);
 
+  app.route('/databases/:databaseId/infos')
+    .get(users.requiresLogin, databases.hasAuthorization, databases.infos);
+
   app.route('/databases/:databaseId/execute')
     .get(users.requiresLogin, databases.hasAuthorization, databases.execute);
 
