@@ -6,6 +6,7 @@ User = mongoose.model('User'),
 Database = mongoose.model('Database'),
 Info = mongoose.model('Info'),
 request = require('supertest'),
+superrequest = require('super-request'),
 path = require('path'),
 app = require('../../server.js'),
 helpers = require('../test_helper.js'),
@@ -147,16 +148,16 @@ describe('Database Controller Tests:', function() {
     it('should return redis db info from Info database', function(done){
       database.save();
 
-        helpers.login('username', 'password', function(cookie) {
-          request(app)
-          .get('/databases/' + database._id + '/info')
-          .set('cookie',cookie)
-          .expect(200)
-          .end(function(err, res) {
-            if(res.body!==null) JSON.stringify(res.body).should.containDeep('keys');
-            done();
-          });
+      helpers.login('username', 'password', function(cookie) {
+        request(app)
+        .get('/databases/' + database._id + '/info')
+        .set('cookie',cookie)
+        .expect(200)
+        .end(function(err, res) {
+          if(res.body!==null) JSON.stringify(res.body).should.containDeep('keys');
+          done();
         });
+      });
     });
   });
 
@@ -278,6 +279,25 @@ describe('Database Controller Tests:', function() {
       });
     });
 
+    xit('should set workingdb attribute in req.session for select commands', function(done){
+      database.save();
+      var count;
+      helpers.login('username','password',function(cookie) {
+        superrequest(app)
+        .get('/databases/' + database._id+'/execute')
+        .qs({command:'select 1'})
+        .set('cookie',cookie)
+        .end(function(err, res){
+          console.log(res.body);
+        })
+        .get('/databases/'+database._id+'/execute')
+        .send({command:'set aaaa1111 1'})
+        .set('cookie',cookie)
+        .end(function(err,res){
+          console.log(res.body);
+        })
+      });
+    });
 
     it('should handle commands with spaces', function(done){
       database.save();

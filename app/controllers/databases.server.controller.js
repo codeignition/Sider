@@ -59,8 +59,26 @@ exports.execute = function(req,res){
   else if(/^eval*/.test(req.param('command'))){
     res.json({result: 'You can not do eval'});
   }
-  else{
+  else if(/^select*/.test(req.param('command'))){
+    var command = req.param('command').split(' ');
+    req.session.workingdb=command[1];
     var client = redis.createClient(req.database.port, req.database.host);
+    client.send_command(command[0],command.splice(1), function( error, result){
+      if(error){
+        return res.send(400, {result: 'Invalid Command' });
+      } else {
+        res.json({result: result});
+      }
+    });
+  }
+  else{
+    if(req.session.workingdb){
+      var client = redis.createClient(req.database.port, req.database.host);
+      client.select(req.session.workingdb);
+    }
+    else{
+      var client = redis.createClient(req.database.port, req.database.host);
+    }
     var command = req.param('command').split(' ');
     client.send_command(command[0],command.splice(1), function( error, result){
       if(error){
