@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('databases').
-  controller('DatabasesController',['$scope', '$stateParams', '$location', 'Authentication','getinfo','executeCommand', 'Databases',
-             function($scope, $stateParams, $location, Authentication, getinfo, executeCommand, Databases) {
+  controller('DatabasesController',['$scope', '$stateParams', '$location', 'Authentication','getinfo','executeCommand', 'infoDatabase', 'Databases',
+             function($scope, $stateParams, $location, Authentication, getinfo, executeCommand, infoDatabase, Databases) {
                $scope.authentication = Authentication;
                $scope.create = function() {
                  var database = new Databases ({
@@ -56,6 +56,26 @@ angular.module('databases').
                    databaseId: $stateParams.databaseId
                  });
 
+
+
+                 $scope.infodb = infoDatabase.query({
+                   databaseId: $stateParams.databaseId
+                 });
+
+
+                 var arr =[];
+
+                 $scope.infodbArr2=[1,2,3,4,5,6,7,8,];
+
+                 $scope.infodb.$promise.then(function(callback){
+                   for(var i in $scope.infodbArr2){
+                     arr[i] = parseInt($scope.infodb[i].content.used_memory);
+                   }
+                   $scope.infodbArr1 = arr;
+                 });
+
+
+
                  $scope.redisinfo = getinfo.get({
                    databaseId: $stateParams.databaseId
                  });
@@ -79,8 +99,8 @@ angular.module('databases').
                    command: $scope.userCommand
                  }, function(){
                  },function(response){
-                  if(response.status===400)
-                    $scope.commandResponse={result:"Invalid Command"};
+                   if(response.status===400)
+                     $scope.commandResponse={result:"Invalid Command"};
                  });
                };
 
