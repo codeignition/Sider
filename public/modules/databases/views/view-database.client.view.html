@@ -10,6 +10,7 @@
     <h3>Redis Info for "{{database.name}}"</h3>
     <br/>
 
+    <<<<<<< HEAD
     <em class="text-muted">
       host address
       <span data-ng-bind="database.host "></span>
@@ -33,21 +34,26 @@
 </div><br><br><br><br>
 <hr>
 <div class="row">
-  <form data-ng-submit=userConsole()>
-    <div class="form-group">
-      <div data-ng-show="consoledb">
-        <label class="control-label" for="host">redis@{{database.host}}:{{database.port}}[{{consoledb.workingdb}}]</label>
-        <input type="text" data-ng-model="userCommand" placeholder="Enter Command" required>
+  <div class="col-md-4">
+    <form data-ng-submit=userConsole()>
+      <div class="form-group">
+        <div data-ng-show="consoledb">
+          <label class="control-label" for="host">redis@{{database.host}}:{{database.port}}[{{consoledb.workingdb}}]</label>
+          <input type="text" data-ng-model="userCommand" placeholder="Enter Command" required>
+        </div>
+        <div data-ng-hide="consoledb">
+          <label class="control-label" for="host">redis@{{database.host}}:{{database.port}}</label>
+          <input type="text" data-ng-model="userCommand" placeholder="Enter Command" required>
+        </div>
+        {{commandResponse.result}}
+        <div class="form-group">
+          <input type="submit" class="btn btn-default">
+        </div>
       </div>
-      <div data-ng-hide="consoledb">
-        <label class="control-label" for="host">redis@{{database.host}}:{{database.port}}</label>
-        <input type="text" data-ng-model="userCommand" placeholder="Enter Command" required>
-      </div>
-    </div>
-    {{commandResponse.result}}
-    <div class="form-group">
-      <input type="submit" class="btn btn-default">
-    </div>
-  </form>
+    </form>
+  </div>
+  <div class="col-md-4">
+    <linechart mem="infodbArr1"  time="infodbArr2"><div></div></linechart>
+  </div>
 </div>
 </section>

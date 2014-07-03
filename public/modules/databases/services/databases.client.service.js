@@ -43,4 +43,15 @@ angular.module('databases')
            });
          }
 ])
+.factory('infoDatabase',['$resource',
+         function($resource){
+           return $resource('databases/:databaseId/infos',{databaseId: '@_id'
+           },{
+             infos:{
+               method: 'GET',
+               isArray: true
+             }
+           });
+         }
+])
 ;
