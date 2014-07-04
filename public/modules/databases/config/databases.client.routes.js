@@ -18,6 +18,10 @@ angular.module('databases').config(['$stateProvider',
 		state('editDatabase', {
 			url: '/databases/:databaseId/edit',
 			templateUrl: 'modules/databases/views/edit-database.client.view.html'
-		});
+		}).
+    state('keySearchInterface', {
+      url: '/databases/:databaseId/keySearch',
+      templateUrl: 'modules/databases/views/key-search.client.view.html'
+    });
 	}
 ]);

@@ -1,0 +1,28 @@
+<section data-ng-controller="DatabasesController" data-ng-init="findOne()">
+<div class="page-header">
+  <h1 data-ng-bind="database.name"></h1>
+</div>
+<div class="row">
+  <div class="col-md-4">
+    <em class="text-muted">
+      host address
+      <span data-ng-bind="database.host "></span>
+      and port no
+      <span data-ng-bind="database.port "></span>
+      <br>
+      <small>
+        Created on
+        <span data-ng-bind="database.created | date:'mediumDate'"></span>
+      </em>
+    </small>
+  </div>
+
+  <div class="col-md-6 col-md-offset-1">
+    <input type="search" data-ng-model="searchKeyword" data-ng-change="searchRedis()" placeholder="Search keys"></input>
+    <select data-ng-options="name for name in collections" data-ng-change="searchRedis()" data-ng-model="selectedCollection">
+    </select>
+  </div>
+  {{searchKeyword}}
+  {{selectedCollection}}
+</div>
+</section>

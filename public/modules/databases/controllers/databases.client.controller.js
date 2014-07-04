@@ -1,9 +1,10 @@
 'use strict';
 
 angular.module('databases').
-  controller('DatabasesController',['$scope', '$stateParams', '$location', 'Authentication','getinfo', 'infoDatabase' , 'getCurrentCollection', 'executeCommand', 'Databases',
-             function($scope, $stateParams, $location, Authentication, getinfo, infoDatabase,  getCurrentCollection, executeCommand, Databases) {
+  controller('DatabasesController',['$scope', '$stateParams', '$location', 'Authentication','getinfo', 'infoDatabase' , 'getCurrentCollection', 'executeCommand','keySearch', 'Databases',
+             function($scope, $stateParams, $location, Authentication, getinfo, infoDatabase,  getCurrentCollection, executeCommand, keySearch, Databases) {
                $scope.authentication = Authentication;
+
                $scope.create = function() {
                  var database = new Databases ({
                    name: this.name,
@@ -57,7 +58,7 @@ angular.module('databases').
                  });
 
                  $scope.consoledb = getCurrentCollection.get({
-                  databaseId: $stateParams.databaseId
+                   databaseId: $stateParams.databaseId
                  });
 
                  $scope.infodb = infoDatabase.query({
@@ -80,21 +81,25 @@ angular.module('databases').
                    databaseId: $stateParams.databaseId
                  });
 
-                 $scope.dbarray=[];
                  $scope.dbnames=[];
+                 $scope.dbarray=[];
+                 $scope.collections=['All Collections'];
 
                  $scope.redisinfo.$promise.then(function(data){
                    angular.forEach($scope.redisinfo, function( value, key ) {
                      if(/^db[0-9]*$/.test(key)){
+                       $scope.collections.push(key);
                        $scope.dbnames.push(key);
                        $scope.dbarray.push($scope.redisinfo[key].keys);
                      }
                    });
                  });
+
+                 $scope.selectedCollection = 'All Collections';
+
                };
 
                $scope.userConsole = function(){
-                 console.log('here');
                  $scope.commandResponse = executeCommand.get({
                    databaseId: $stateParams.databaseId,
                    command: $scope.userCommand
@@ -105,6 +110,20 @@ angular.module('databases').
                      $scope.commandResponse={result:"Invalid Command"};
                  });
                  this.userCommand='';
+               };
+
+
+               $scope.myFunc= function(){
+                 console.log('keyword-'+$scope.searchKeyword);
+                 console.log('selection'+$scope.selectedCollection);
+               };
+
+               $scope.searchRedis=function(){
+                 $scope.searchResult = keySearch.get({
+                   databaseId: $stateParams.databaseId,
+                   searchKeyword: $scope.searchKeyword,
+                   selectedCollection: $scope.selectedCollection
+                 });
                };
 
 

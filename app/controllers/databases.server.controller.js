@@ -67,22 +67,22 @@ exports.currentCollection = function(req,res){
 
 exports.execute = function(req,res){
   if(/^flush*/.test(req.param('command'))){
-    res.json({result:'You can not flush db',workingdb:req.session.workingdb});
+res.json({result:'You can not flush db',workingdb:req.session.workingdb});
   }
   else if(/^eval*/.test(req.param('command'))){
-    res.json({result: 'You can not do eval',workingdb:req.session.workingdb});
+res.json({result: 'You can not do eval',workingdb:req.session.workingdb});
   }
   else if(/^select*/.test(req.param('command'))){
-    var command = req.param('command').split(' ');
-    req.session.workingdb=command[1];
-    var client = redis.createClient(req.database.port, req.database.host);
-    client.send_command(command[0],command.splice(1), function( error, result){
-      if(error){
-        return res.send(400, {result: 'Invalid Command',workingdb:req.session.workingdb});
-      } else {
-        res.json({result: result,workingdb:req.session.workingdb});
-      }
-    });
+var command = req.param('command').split(' ');
+req.session.workingdb=command[1];
+var client = redis.createClient(req.database.port, req.database.host);
+client.send_command(command[0],command.splice(1), function( error, result){
+  if(error){
+    return res.send(400, {result: 'Invalid Command',workingdb:req.session.workingdb});
+  } else {
+    res.json({result: result,workingdb:req.session.workingdb});
+  }
+});
   }
   else{
     if(req.session.workingdb){
@@ -101,6 +101,11 @@ exports.execute = function(req,res){
       }
     });
   }
+};
+
+exports.searchRedis = function(req,res){
+  console.log(req.param('searchKeyword'));
+  console.log(req.param('selectedCollection'));
 };
 
 exports.update = function(req, res) {

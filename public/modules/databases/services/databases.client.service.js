@@ -22,6 +22,17 @@ angular.module('databases')
            });
          }
 ])
+.factory('infoDatabase',['$resource',
+         function($resource){
+           return $resource('databases/:databaseId/infos',{databaseId: '@_id'
+           },{
+            infos:{
+               method: 'GET',
+               isArray: true
+             }
+           });
+        }
+])
 .factory('getCurrentCollection', ['$resource',
         function($resource) {
           return $resource('databases/:databaseId/currentCollection',{ databaseId: '@_id'
@@ -31,6 +42,17 @@ angular.module('databases')
             }
           });
         }
+])
+.factory('keySearch', ['$resource',
+         function($resource) {
+          return $resource('databases/:databaseId/keySearch',{ databaseId: '@_id'
+          }, {
+            searchRedis: {
+              method: 'GET',
+              params: {searchKeyword:true, selectedCollection:true}
+            }
+          });
+         }
 ])
 .factory('executeCommand',['$resource',
          function($resource){

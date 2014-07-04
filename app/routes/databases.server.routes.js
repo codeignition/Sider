@@ -20,6 +20,9 @@ module.exports = function(app) {
   app.route('/databases/:databaseId/currentCollection')
     .get(users.requiresLogin, databases.hasAuthorization, databases.currentCollection);
 
+  app.route('/databases/:databaseId/keySearch')
+    .get(users.requiresLogin, databases.hasAuthorization, databases.searchRedis);
+
   app.route('/databases/:databaseId')
 		.get(users.requiresLogin, databases.hasAuthorization, databases.read )
 		.put(users.requiresLogin, databases.hasAuthorization, databases.update)
