@@ -45,9 +45,6 @@ var DatabaseSchema = new Schema({
 DatabaseSchema.methods.fetchInfoFromClient = function(callback){
   var _this = this;
   var client = redis.createClient(_this.port, _this.host);
-  client.on('error', function(error){
-   if (error) callback(error);
-   else {
   client.info(function(){
     var info = new Info({
       database: _this,
@@ -58,9 +55,8 @@ DatabaseSchema.methods.fetchInfoFromClient = function(callback){
     });
     client.quit();
   });
-   }
-});
-}
+};
+
 
 DatabaseSchema.methods.getInfo = function(callback){
   var _this = this;
