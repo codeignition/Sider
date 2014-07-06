@@ -43,31 +43,35 @@ var DatabaseSchema = new Schema({
 });
 
 function parseInfo (info) {
-    for( var key in info){
-      if(/^db[0-9]*$/.test(key)){
-        var dbstring = info[key].split(',');
-        info[key]={};
-        for(var i in dbstring){
-          var dbparam = dbstring[i].split('=');
-          info[key][dbparam[0]]=parseInt(dbparam[1]);
-        }
+  for( var key in info){
+    if(/^db[0-9]*$/.test(key)){
+      var dbstring = info[key].split(',');
+      info[key]={};
+      for(var i in dbstring){
+        var dbparam = dbstring[i].split('=');
+        info[key][dbparam[0]]=parseInt(dbparam[1]);
       }
     }
+  }
   return info;
 }
 
 DatabaseSchema.methods.fetchInfoFromClient = function(callback){
   var _this = this;
   var client = redis.createClient(_this.port, _this.host);
-  client.info(function(){
-    var info = new Info({
-      database: _this,
-      content:  parseInfo(client.server_info)
+  client.on('error', function(error){console.log(error); client.quit(); });
+  client.on('connect', function(){
+    console.log('yay');
+    client.info(function(){
+      var info = new Info({
+        database: _this,
+        content:  parseInfo(client.server_info)
+      });
+      info.save(function(err){
+        callback(err, info);
+      });
+      client.quit();
     });
-    info.save(function(err){
-      callback(err, info);
-    });
-    client.quit();
   });
 };
 
@@ -79,7 +83,7 @@ DatabaseSchema.methods.getInfo = function(callback){
     if (error || !data.length) _this.fetchInfoFromClient(function(err, latestinfo){
       if(err) callback(err);
       else callback(null, latestinfo);
-      });
+    });
     else callback(null, data[0]);
   });
 };
