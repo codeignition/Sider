@@ -8,7 +8,7 @@ var events = require('events');
 var async = require('async');
 var client, redisinfo, serverinfo, dbs, db;
 
-exports.schedule = "* * * * * *";
+exports.schedule = '* * * * * *';
 
 var EventEmitter = events.EventEmitter;
 exports.infoEmitter = new EventEmitter();
@@ -23,4 +23,4 @@ exports.job = function(){
       exports.infoEmitter.emit('jobdone');
     });
   });
-}
+};

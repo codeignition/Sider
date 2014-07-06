@@ -42,6 +42,20 @@ var DatabaseSchema = new Schema({
   }
 });
 
+function parseInfo (info) {
+    for( var key in info){
+      if(/^db[0-9]*$/.test(key)){
+        var dbstring = info[key].split(',');
+        info[key]={};
+        for(var i in dbstring){
+          var dbparam = dbstring[i].split('=');
+          info[key][dbparam[0]]=parseInt(dbparam[1]);
+        }
+      }
+    }
+  return info;
+}
+
 DatabaseSchema.methods.fetchInfoFromClient = function(callback){
   var _this = this;
   var client = redis.createClient(_this.port, _this.host);
@@ -70,18 +84,5 @@ DatabaseSchema.methods.getInfo = function(callback){
   });
 };
 
-function parseInfo (info) {
-    for( var key in info){
-      if(/^db[0-9]*$/.test(key)){
-        var dbstring = info[key].split(',');
-        info[key]={};
-        for(var i in dbstring){
-          var dbparam = dbstring[i].split('=');
-          info[key][dbparam[0]]=parseInt(dbparam[1]);
-        }
-      }
-    }
-  return info;
-}
 
 mongoose.model('Database', DatabaseSchema);

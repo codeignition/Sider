@@ -8,7 +8,7 @@ angular.module('databases')
              directive.scope = {
                info: '=info',
                names:'=names'
-             }
+             };
              var a=100;
              directive.link = function (scope, element, attrs) {
                scope.$watch( function(){
@@ -19,9 +19,6 @@ angular.module('databases')
                    ele.remove();
                  });
                });
-             }
-
+             };
              return directive;
-
-           }
-          );
+           });
