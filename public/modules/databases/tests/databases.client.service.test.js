@@ -1,7 +1,7 @@
 'use strict';
 
 (function(){
-  describe("Database Service Tests", function(){
+  describe('Database Service Tests', function(){
 
     var DatabasesController,
     scope,
@@ -44,8 +44,8 @@
       service = getinfo;
     }));
 
-    describe("getinfo-info()", function(){
-      xit("should redirect application to /databases/databaseid/info url", function(Databases){
+    describe('getinfo-info()', function(){
+      xit('should redirect application to /databases/databaseid/info url', function(Databases){
         var sampleDatabase = new Databases({
           name: 'New DB',
           host: 'New Host',
@@ -62,7 +62,7 @@
 
       });
 
-      xit("should return server info as json object", function(Databases){
+      xit('should return server info as json object', function(Databases){
 
         var sampleDatabase = new Databases({
           name: 'New Database',
