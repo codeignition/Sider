@@ -104,8 +104,60 @@ client.send_command(command[0],command.splice(1), function( error, result){
 };
 
 exports.searchRedis = function(req,res){
-  console.log(req.param('searchKeyword'));
-  console.log(req.param('selectedCollection'));
+  var database = req.database;
+  var searchKeyword = req.param('searchKeyword');
+  var selectedCollection = req.param('selectedCollection');
+  var matchedKeys=[];
+  if(selectedCollection==='All Collections'){
+    var client = redis.createClient(database.port, database.host);
+    client.info(function(){
+      var info= client.server_info;
+      var dbs=[];
+      for(var key in info){
+        if(/^db[0-9]*$/.test(key)){
+          key = key.split('b');
+          dbs.push(key[key.length-1]);
+        }
+      }
+      for(var i=0; i<dbs.length; i++){
+        client.select(dbs[i]);
+        client.send_command('keys',['*'],function(error,result){
+          if(error)
+            console.log(error);
+          else{
+            var keys = result;
+            for( var i=0; i<keys.length ; i++){
+              if((new RegExp('^'+searchKeyword)).test(keys[i])){
+                matchedKeys.push(keys[i]);
+              }
+            }
+          }
+          if(i===dbs.length-1){
+            res.json({result:matchedKeys});
+          }
+        });
+      }
+    });
+  }
+  else{
+    selectedCollection = selectedCollection.split('b');
+    var client = redis.createClient(database.port, database.host);
+    client.select(selectedCollection[selectedCollection.length-1]);
+    client.send_command('keys',['*'],function(error,result){
+      if(error)
+        console.log(error);
+      else{
+        var keys = result;
+        var matchedKeys = [];
+        for( var i=0; i<keys.length ; i++){
+          if((new RegExp('^'+searchKeyword)).test(keys[i])){
+            matchedKeys.push(keys[i]);
+          }
+        }
+        res.json({result:matchedKeys});
+      }
+    });
+  }
 };
 
 exports.update = function(req, res) {

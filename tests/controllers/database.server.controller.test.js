@@ -471,6 +471,50 @@ describe('Database Controller Tests:', function() {
     });
   });
 
+  describe('GET /databases/:id/keySearch', function(){
+    it('should require user login', function(done){
+      database.save();
+      request(app)
+      .get('/databases/' + database._id +'/keySearch')
+      .expect(401, done);
+    });
+
+    it('should allow only authorized user', function(done){
+      var user2 = new User({
+        firstName: 'Full',
+        lastName: 'Name2',
+        displayName: 'Full Name2',
+        email: 'test2@test.com',
+        username: 'username2',
+        password: 'password2',
+        provider: 'local'
+      });
+      database.save();
+      user2.save(function(err) {
+        helpers.login('username2', 'password2', function(cookie) {
+          request(app)
+          .get('/databases/' + database._id+'/keySearch')
+          .set('cookie',cookie)
+          .expect(403, done);
+        });
+      });
+    });
+    it('should return keys matching to searchKeyword in selectedCollection', function(done){
+      database.save(function(){
+        helpers.login('username', 'password', function(cookie) {
+          request(app)
+          .get('/databases/' + database._id+ '/keySearch')
+          .send({searchKeyword:'foo',selectedCollection:'db0'})
+          .set('cookie',cookie)
+          .end(function(err, res){
+            res.body.should.equal(["foo234567890","foo","foo123435366","foo34534253425234567890"]);
+            done();
+            });
+          });
+        });
+      });
+    });
+
 
 
   afterEach(function(done) {

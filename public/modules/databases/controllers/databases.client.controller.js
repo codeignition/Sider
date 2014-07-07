@@ -112,14 +112,8 @@ angular.module('databases').
                  this.userCommand='';
                };
 
-
-               $scope.myFunc= function(){
-                 console.log('keyword-'+$scope.searchKeyword);
-                 console.log('selection'+$scope.selectedCollection);
-               };
-
                $scope.searchRedis=function(){
-                 $scope.searchResult = keySearch.get({
+                 if($scope.searchKeyword)$scope.searchResult = keySearch.get({
                    databaseId: $stateParams.databaseId,
                    searchKeyword: $scope.searchKeyword,
                    selectedCollection: $scope.selectedCollection
