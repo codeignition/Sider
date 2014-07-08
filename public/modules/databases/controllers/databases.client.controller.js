@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('databases').
-  controller('DatabasesController',['$scope', '$stateParams', '$location', 'Authentication','getinfo', 'infoDatabase' , 'getCurrentCollection', 'executeCommand','keySearch', 'Databases',
-             function($scope, $stateParams, $location, Authentication, getinfo, infoDatabase,  getCurrentCollection, executeCommand, keySearch, Databases) {
+  controller('DatabasesController',['$scope', '$stateParams', '$location', 'Authentication','getinfo', 'infoDatabase' , 'getCurrentCollection', 'executeCommand','keySearch', 'Databases','getKeyValue',
+             function($scope, $stateParams, $location, Authentication, getinfo, infoDatabase,  getCurrentCollection, executeCommand, keySearch, Databases, getKeyValue) {
                $scope.authentication = Authentication;
 
                $scope.create = function() {
@@ -100,17 +100,24 @@ angular.module('databases').
                };
 
                $scope.showKeyValue = function(key){
-                console.log(key);
                  if($scope.selectedCollection==='All Collections'){
-                  
-                }
-                else{
-                
-                }
-                 $scope.getKeyValue = executeCommand.get({
-                  databaseId: $stateParams.databaseId,
-                  command: 'get '+key[0]
-                });
+                   $scope.keyValue = getKeyValue.get({
+                     databaseId: $stateParams.databaseId,
+                     selectedCollection: key[1].split('b')[1],
+                     key: key[0]
+                   });
+                   $scope.isClicked=true;
+                   $scope.forKey=key;
+                 }
+                 else{
+                   $scope.keyValue = getKeyValue.get({
+                     databaseId: $stateParams.databaseId,
+                     selectedCollection: $scope.selectedCollection.split('b')[1],
+                     key: key
+                   });
+                   $scope.isClicked=true;
+                   $scope.forKey=key;
+                 }
                };
 
                $scope.userConsole = function(){
@@ -132,12 +139,6 @@ angular.module('databases').
                    searchKeyword: $scope.searchKeyword,
                    selectedCollection: $scope.selectedCollection
                  });
-                 if($scope.selectedCollection==='All Collections'){
-                   console.log($scope.searchResult);
-//                   console.log($scope.searchResult.split('-'));
-//                  $scope.inCollection = $scope.searchResult.split('-')[1];
-//                  $scope.searchResult = $scope.searchResult.split('-')[0];
-                 }
                };
 
 

@@ -23,7 +23,10 @@ module.exports = function(app) {
   app.route('/databases/:databaseId/keySearch')
     .get(users.requiresLogin, databases.hasAuthorization, databases.searchRedis);
 
-  app.route('/databases/:databaseId')
+  app.route('/databases/:databaseId/keyValue')
+    .get(users.requiresLogin, databases.hasAuthorization, databases.showKeyValue);
+ 
+    app.route('/databases/:databaseId')
 		.get(users.requiresLogin, databases.hasAuthorization, databases.read )
 		.put(users.requiresLogin, databases.hasAuthorization, databases.update)
 		.delete(users.requiresLogin, databases.hasAuthorization, databases.delete);

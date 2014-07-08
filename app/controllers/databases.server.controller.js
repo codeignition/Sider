@@ -61,6 +61,7 @@ exports.infos = function(req, res){
   });
 };
 
+
 exports.currentCollection = function(req,res){
   res.json({workingdb:req.session.workingdb});
 };
@@ -123,7 +124,6 @@ exports.searchRedis = function(req,res,cb){
       for(var i=0; i<dbs.length; i++){
         client.select(dbs[i]);
         client.send_command('keys',['*'],function(error,result){
-          jcount++;
           if(error)
             console.log(error);
           else{
@@ -134,6 +134,7 @@ exports.searchRedis = function(req,res,cb){
               }
             }
           }
+          jcount++;
           if (jcount===dbs.length) {
             res.json({result:matchedKeys});
           }
@@ -162,6 +163,24 @@ exports.searchRedis = function(req,res,cb){
     });
   }
 };
+
+exports.showKeyValue = function(req,res){
+  var database = req.database;
+  var selectedCollection = req.param('selectedCollection');
+  var key = req.param('key');
+  var client = redis.createClient(database.port, database.host);
+
+  client.select(selectedCollection);
+  client.send_command('get',[key],function (error,response) {
+    if(error)
+      console.log(error);
+    else
+      {res.json({value:response});
+      }
+
+  });
+};
+
 
 exports.update = function(req, res) {
   var database = req.database ;

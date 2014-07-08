@@ -21,14 +21,16 @@
     <input type="search" data-ng-model="searchKeyword" data-ng-change="searchRedis()" placeholder="Search keys"></input>
     <select data-ng-options="name for name in collections" data-ng-change="searchRedis()" data-ng-model="selectedCollection">
     </select>
-  </div>
   <hr>
-  <div class="list-group">
-    <a data-ng-repeat="key in searchResult.result track by $index" data-ng-click="showKeyValue(key)" class="list-group-item">
+
+    <a data-ng-repeat="key in searchResult.result track by $index" href data-ng-click="showKeyValue(key)" class="list-group-item">
       <h4 class="ng-init:key=key.split('-')" data-ng-bind="key[0]"></h4>
-      <small>
+        <small>
         <span data-ng-bind="key[1]"></span>
       </small>
+      <div data-ng-show="isClicked&&forKey===key">
+        <h4>Value- {{keyValue.value}}</h4>
+      </div>
     </a>
   </div>
  
