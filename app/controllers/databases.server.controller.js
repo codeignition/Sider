@@ -103,7 +103,7 @@ client.send_command(command[0],command.splice(1), function( error, result){
   }
 };
 
-exports.searchRedis = function(req,res){
+exports.searchRedis = function(req,res,cb){
   var database = req.database;
   var searchKeyword = req.param('searchKeyword');
   var selectedCollection = req.param('selectedCollection');
@@ -119,23 +119,26 @@ exports.searchRedis = function(req,res){
           dbs.push(key[key.length-1]);
         }
       }
+      var jcount=0;
       for(var i=0; i<dbs.length; i++){
         client.select(dbs[i]);
         client.send_command('keys',['*'],function(error,result){
+          jcount++;
           if(error)
             console.log(error);
           else{
             var keys = result;
-            for( var i=0; i<keys.length ; i++){
-              if((new RegExp('^'+searchKeyword)).test(keys[i])){
-                matchedKeys.push(keys[i]);
+            for( var j=0; j<keys.length ; j++){
+              if((new RegExp('^'+searchKeyword)).test(keys[j])){
+                matchedKeys.push(keys[j]);
               }
             }
           }
-          if(i===dbs.length-1){
+          if (jcount===dbs.length) {
             res.json({result:matchedKeys});
           }
         });
+
       }
     });
   }
