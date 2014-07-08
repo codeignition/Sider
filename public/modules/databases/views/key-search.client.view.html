@@ -1,38 +1,38 @@
 <section data-ng-controller="DatabasesController" data-ng-init="findOne()">
-<div class="page-header">
-  <h1 data-ng-bind="database.name"></h1>
-</div>
-<div class="row">
-  <div class="col-md-4">
-    <em class="text-muted">
-      host address
-      <span data-ng-bind="database.host "></span>
-      and port no
-      <span data-ng-bind="database.port "></span>
-      <br>
-      <small>
-        Created on
-        <span data-ng-bind="database.created | date:'mediumDate'"></span>
-      </em>
-    </small>
+  <div class="page-header">
+    <h1 data-ng-bind="database.name"></h1>
   </div>
-
-  <div class="col-md-6 col-md-offset-1">
-    <input type="search" data-ng-model="searchKeyword" data-ng-change="searchRedis()" placeholder="Search keys"></input>
-    <select data-ng-options="name for name in collections" data-ng-change="searchRedis()" data-ng-model="selectedCollection">
-    </select>
-  <hr>
-
-    <a data-ng-repeat="key in searchResult.result track by $index" href data-ng-click="showKeyValue(key)" class="list-group-item">
-      <h4 class="ng-init:key=key.split('-')" data-ng-bind="key[0]"></h4>
+  <div class="row">
+    <div class="col-md-4">
+      <em class="text-muted">
+        host address
+        <span data-ng-bind="database.host "></span>
+        and port no
+        <span data-ng-bind="database.port "></span>
+        <br>
         <small>
-        <span data-ng-bind="key[1]"></span>
+          Created on
+          <span data-ng-bind="database.created | date:'mediumDate'"></span>
+        </em>
       </small>
-      <div data-ng-show="isClicked&&forKey===key">
-        <h4>Value- {{keyValue.value}}</h4>
-      </div>
-    </a>
+    </div>
+
+    <div class="col-md-6 col-md-offset-1">
+      <input type="search" data-ng-model="searchKeyword" data-ng-change="searchRedis()" placeholder="Search keys"></input>
+      <select data-ng-options="name for name in collections" data-ng-change="searchRedis()" data-ng-model="selectedCollection">
+      </select>
+      <hr>
+
+      <a data-ng-repeat="key in searchResult.result track by $index" href data-ng-click="showKeyValue(key)" class="list-group-item">
+        <h4 class="ng-init:key=key.split('-')" data-ng-bind="key[0]"></h4>
+        <small>
+          <span data-ng-bind="key[1]"></span>
+        </small>
+        <div data-ng-show="(isClicked&&forKey===key)">
+          <div data-ng-if="searchResult.result.length===1" data-ng-init="showKeyValue(key)"></div>
+          <h4>Value- {{keyValue.value}}</h4>
+        </div>
+      </a>
+    </div>
   </div>
- 
-</div>
 </section>
