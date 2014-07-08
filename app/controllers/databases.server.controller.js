@@ -130,7 +130,7 @@ exports.searchRedis = function(req,res,cb){
             var keys = result;
             for( var j=0; j<keys.length ; j++){
               if((new RegExp('^'+searchKeyword)).test(keys[j])){
-                matchedKeys.push(keys[j]);
+                matchedKeys.push(keys[j]+'-db'+jcount);
               }
             }
           }

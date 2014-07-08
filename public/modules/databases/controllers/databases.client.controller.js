@@ -99,6 +99,20 @@ angular.module('databases').
 
                };
 
+               $scope.showKeyValue = function(key){
+                console.log(key);
+                 if($scope.selectedCollection==='All Collections'){
+                  
+                }
+                else{
+                
+                }
+                 $scope.getKeyValue = executeCommand.get({
+                  databaseId: $stateParams.databaseId,
+                  command: 'get '+key[0]
+                });
+               };
+
                $scope.userConsole = function(){
                  $scope.commandResponse = executeCommand.get({
                    databaseId: $stateParams.databaseId,
@@ -118,6 +132,12 @@ angular.module('databases').
                    searchKeyword: $scope.searchKeyword,
                    selectedCollection: $scope.selectedCollection
                  });
+                 if($scope.selectedCollection==='All Collections'){
+                   console.log($scope.searchResult);
+//                   console.log($scope.searchResult.split('-'));
+//                  $scope.inCollection = $scope.searchResult.split('-')[1];
+//                  $scope.searchResult = $scope.searchResult.split('-')[0];
+                 }
                };
 
 
