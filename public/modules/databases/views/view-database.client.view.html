@@ -37,11 +37,11 @@
     <div class="col-md-4">
       <form data-ng-submit=userConsole()>
         <div class="form-group">
-          <div data-ng-show="consoledb">
+          <div data-ng-show="consoledb.workingdb">
             <label class="control-label" for="host">redis@{{database.host}}:{{database.port}}[{{consoledb.workingdb}}]</label>
             <input type="text" data-ng-model="userCommand" placeholder="Enter Command" required>
           </div>
-          <div data-ng-hide="consoledb">
+          <div data-ng-show="!consoledb.workingdb">
             <label class="control-label" for="host">redis@{{database.host}}:{{database.port}}</label>
             <input type="text" data-ng-model="userCommand" placeholder="Enter Command" required>
           </div>
