@@ -33,8 +33,8 @@ describe('Database Model Unit Tests:', function() {
     user.save(function() { 
       database = new Database({
         name: 'Database Name',
-        host:'host',
-        port: 1000,
+        host:'localhost',
+        port: 6379,
         user: user
       });
 
@@ -59,9 +59,8 @@ describe('Database Model Unit Tests:', function() {
       });
     });
 
-    it('should be able to show an error when try to save without host', function(done) { 
+    it('should be able to show an error when try to save without host', function(done) {
       database.host = '';
-
       return database.save(function(err) {
         should.exist(err);
         done();
@@ -78,6 +77,61 @@ describe('Database Model Unit Tests:', function() {
     });
   });
 
+  describe('Method execute', function(){
+    it('should return command result', function(done){
+      database.save();
+      database.execute('select 1', function(err, res){
+        res.should.equal('OK');
+        done();
+      });
+    });
+
+    it('should disable flush,eval commands', function(done){
+      database.save();
+      database.execute('flushdb',function(err, res){
+        should.exist(err);
+        err.message.should.equal('You can not flush db!');
+      });
+      database.execute('eval', function(err, res){
+        should.exist(err);
+        err.message.should.equal('Eval is evil!');
+        done();
+      });
+    });
+
+    it('should give error for invalid commands', function(done){
+      database.save();
+      database.execute('dadsf',function(err, res){
+        should.exist(err);
+        done();
+      });
+    });
+  });
+
+  describe('Method connectionFactory',function () {
+   it('should create client', function(done){
+    database.save();
+    database.connectionFactory(function(error, client){
+      should.exist(client);
+      done();
+    });
+   });
+
+   it('should give error when tries to connect to an unavailable redis', function(done){
+    var db = new Database({
+      name: 'New DB',
+      host: '1.1.1.1',
+      port: 1000,
+      user: user
+    });
+    db.save();
+    db.connectionFactory(function (error, client) {
+      should.exist(error);
+      done();
+    })
+   });
+
+  });
   describe('#fetchInfoFromClient',function(){
     it('should fetch info from redis and save as Info model', function(done){
       var database1 = new Database({

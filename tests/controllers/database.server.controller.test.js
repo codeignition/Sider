@@ -53,10 +53,8 @@ describe('Database Controller Tests:', function() {
         .send(database)
         .expect(200)
         .end(function(err,res){
-          Database.findOne({ '_id' : res.body['_id']}, function(err, db){
-            db.name.should.equal(database['name']);
-            done();
-          });
+          res.body['name'].should.equal(database['name']);
+          done();
         });
       });
     });
@@ -159,7 +157,7 @@ describe('Database Controller Tests:', function() {
         .set('cookie',cookie)
         .expect(200)
         .end(function(err, res) {
-          if(res.body!==null) JSON.stringify(res.body).should.containDeep('keys');
+          JSON.stringify(res.body).should.containDeep('keys');
           done();
         });
       });
@@ -417,7 +415,7 @@ describe('Database Controller Tests:', function() {
         .delete('/databases/' + database._id)
         .set('cookie',cookie)
         .end(function(err, res){
-          JSON.stringify(res.body._id).should.eql(databaseId);
+          JSON.stringify(res.body._id).should.equal(databaseId);
           done();
         });
       });
@@ -461,7 +459,7 @@ describe('Database Controller Tests:', function() {
           .end(function(err, res){
             Info.find({database : database._id}).sort('-timestamp').limit(10)
             .exec(function(error, data){
-              data.should.eql(res.body);
+              JSON.stringify(data).should.equal(JSON.stringify(res.body));
               done();
             });
           });
@@ -558,8 +556,7 @@ describe('Database Controller Tests:', function() {
           .send({searchKeyword:'foo',selectedCollection:'db0'})
           .set('cookie',cookie)
           .end(function(err, res){
-            res.body.result.should.eql(["foo234567890","foo","foo123435366","foo34534253425234567890"]);
-            done();
+            JSON.stringify(res.body).should.equal(JSON.stringify({result:["foo234567890","foo","foo123435366","foo34534253425234567890"]})); done();
           });
         });
       });
@@ -573,7 +570,7 @@ describe('Database Controller Tests:', function() {
         .send({searchKeyword:'d', selectedCollection:'All Collections'})
         .set('cookie', cookie)
         .end(function(err, res){
-          res.body.result.should.eql(['dsafad-db0', 'dsafadf-db0', 'dsaf2-db2','dasfs-db2']);
+          JSON.stringify(res.body).should.equal(JSON.stringify({result:['dsafad-db0', 'dsafadf-db0', 'dsaf2-db2','dasfs-db2']}));
           done();
         });
       });

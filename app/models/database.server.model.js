@@ -56,12 +56,38 @@ function parseInfo (info) {
   return info;
 }
 
+DatabaseSchema.methods.connectionFactory = function(callback){
+  var client = redis.createClient(this.port, this.host);
+  client.on('error', function(error){ callback(error) });
+  client.on('connect', function(){ callback(null, client); });
+};
+
+function commandAllowed(command) {
+  if(/^flush*/.test(command))
+    return new Error('You can not flush db!');
+  else if(/^eval*/.test(command))
+    return new Error('Eval is evil!');
+  return null;
+}
+
+DatabaseSchema.methods.execute = function(command, callback){
+  var error = commandAllowed(command)
+  if(error) return callback(error, null);
+  command = command.split(' ');
+  this.connectionFactory(function(error, client){
+    if(error) return callback(error);
+    client.send_command(command[0],command.splice(1),function(error, response){
+      callback(error, response);
+    });
+    client.quit();
+  });
+}
+
 DatabaseSchema.methods.fetchInfoFromClient = function(callback){
   var _this = this;
   var client = redis.createClient(_this.port, _this.host);
   client.on('error', function(error){console.log(error); client.quit(); });
   client.on('connect', function(){
-    console.log('yay');
     client.info(function(){
       var info = new Info({
         database: _this,
