@@ -9,12 +9,16 @@ angular.module('databases')
                info: '=info',
                names:'=names'
              };
-             var a=100;
              directive.link = function (scope, element, attrs) {
+               var infoArray = scope.info;
+               var namesArray = scope.names;
+               var entry = true;
                scope.$watch( function(){
-                 var x = element.children(0)[0].clientWidth;
-                 var ele = Raphael(x/2,x/2,x/2+100,x/2);
-                 ele.piechart(x/4,x/4,x/4,scope.info,{ legend:scope.names});
+                 if(infoArray.length && namesArray.length && entry ){
+                 var ele = Raphael('pie');
+                 entry=false;
+                 ele.piechart(100,100,100,infoArray,{ legend:namesArray});
+                 }
                  scope.$on('$destroy',function(){
                    ele.remove();
                  });
