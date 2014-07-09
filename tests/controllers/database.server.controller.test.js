@@ -77,16 +77,14 @@ describe('Database Controller Tests:', function() {
           .set('cookie', cookie)
           .expect(200)
           .end(function(err, res){
-            Database.find({ 'user_id' : res.body['user']}, function(err, dbs){
-              dbs[0].name.should.equal(database['name']);
-              done();
-            });
+            JSON.stringify(res.body).should.containDeep('Database Name');
+            done();
           });
         });
       });
     });
 
-    xit('should not be able to see databases of other users', function() {
+    it('should not be able to see databases of other users', function(done) {
       var user2 = new User({
         firstName: 'Full',
         lastName: 'Name2',
@@ -96,20 +94,27 @@ describe('Database Controller Tests:', function() {
         password: 'password2',
         provider: 'local'
       });
-
       database.save();
-
-      user2.save();
+      user2.save(function(err){
+        var db = new Database({
+          name: 'User2db',
+          host:'localhost',
+          port:6379,
+          user: user2
+        });
+        db.save(function(err){
+          if(err)console.log(err);
+        });
+      });
       helpers.login('username2', 'password2', function(cookie) {
         request(app)
         .get('/databases')
         .set('cookie',cookie)
         .expect(200)
         .end(function(err, res){
-          Database.find({ 'user2_id' : res.body['user2']}, function(err, dbs){
-            dbs[0].name.should.not.equal(database['name']);
-            done();
-          });
+          JSON.stringify(res.body).should.containDeep('Full Name2');
+          JSON.stringify(res.body).should.not.containDeep('Database Name');
+          done();
         });
       });
 
@@ -279,22 +284,17 @@ describe('Database Controller Tests:', function() {
       });
     });
 
-    xit('should set workingdb attribute in req.session for select commands', function(done){
+    it('should set workingdb attribute in req.session for select commands', function(done){
       database.save();
-      var count;
       helpers.login('username','password',function(cookie) {
-        superrequest(app)
+        request(app)
         .get('/databases/' + database._id+'/execute')
-        .qs({command:'select 1'})
+        .send({command:'select 1'})
         .set('cookie',cookie)
         .end(function(err, res){
-          console.log(res.body);
-        })
-        .get('/databases/'+database._id+'/execute')
-        .send({command:'set aaaa1111 1'})
-        .set('cookie',cookie)
-        .end(function(err,res){
-          console.log(res.body);
+          res.body.result.should.equal('OK');
+          res.body.workingdb.should.equal('1');
+          done();
         })
       });
     });
@@ -362,9 +362,9 @@ describe('Database Controller Tests:', function() {
       });
     });
 
-    xit('should return update db content', function(done){
+    it('should return update db content', function(done){
+      database.name='New Name';
       database.save();
-
       helpers.login('username', 'password', function(cookie) {
         request(app)
         .put('/databases/' + database._id)
@@ -372,7 +372,8 @@ describe('Database Controller Tests:', function() {
         .send(database)
         .expect(200)
         .end(function(err, res) {
-          JSON.stringify(res.body._id).should.equal(JSON.stringify(database._id));
+          JSON.stringify(res.body).should.containDeep('New Name');
+          JSON.stringify(res.body).should.not.containDeep('Database Name');
           done();
         });
       });
@@ -408,18 +409,16 @@ describe('Database Controller Tests:', function() {
       });
     });
 
-    xit('should delete db', function(done){
+    it('should delete db', function(done){
       database.save();
-
+      var databaseId = JSON.stringify(database._id);
       helpers.login('username', 'password', function(cookie) {
         request(app)
         .delete('/databases/' + database._id)
         .set('cookie',cookie)
         .end(function(err, res){
-          Database.findOne({ '_id' : database._id}, function(err, db){
-            //if (db) ;
-            if (err) done();
-          });
+          JSON.stringify(res.body._id).should.eql(databaseId);
+          done();
         });
       });
     });
@@ -471,6 +470,57 @@ describe('Database Controller Tests:', function() {
     });
   });
 
+  describe('GET  /databases/:databaseId/currentCollection', function(done){
+    it('should require user login', function(done){
+      database.save();
+      request(app)
+      .get('/databases/'+database._id+'/currentCollection')
+      .expect(401, done);
+    });
+
+    it('should allow only authorized users', function(done){
+      var user2 = new User({
+        firstName: 'Full',
+        lastName: 'Name2',
+        displayName: 'Full Name2',
+        email: 'test2@test.com',
+        username: 'username2',
+        password: 'password2',
+        provider: 'local'
+      });
+      user2.save();
+      database.save();
+      helpers.login('username2','password2',function(cookie){
+        request(app)
+        .get('/databases/'+database._id+'/currentCollection')
+        .set({'cookie':cookie})
+        .expect(403, done);
+      });
+    });
+
+    it('should return currentCollection selected in user-redisConsole', function(done){
+      database.save();
+      helpers.login('username', 'password', function(cookie){
+        request(app)
+        .get('/databases/'+database._id+'/execute')
+        .set({'cookie':cookie})
+        .send({command:'select 1'})
+        .expect(200)
+        .end(function(err, res){
+          res.body.result.should.equal("OK");
+          request(app)
+          .get('/databases/'+database._id+'/currentCollection')
+          .set({'cookie':cookie})
+          .expect(200)
+          .end(function(err, res){
+            res.body.workingdb.should.equal('1');
+            done();
+          });
+        });
+      });
+    });
+  });
+
   describe('GET /databases/:id/keySearch', function(){
     it('should require user login', function(done){
       database.save();
@@ -499,6 +549,7 @@ describe('Database Controller Tests:', function() {
         });
       });
     });
+
     it('should return keys matching to searchKeyword in selectedCollection', function(done){
       database.save(function(){
         helpers.login('username', 'password', function(cookie) {
@@ -507,15 +558,72 @@ describe('Database Controller Tests:', function() {
           .send({searchKeyword:'foo',selectedCollection:'db0'})
           .set('cookie',cookie)
           .end(function(err, res){
-            res.body.should.equal(["foo234567890","foo","foo123435366","foo34534253425234567890"]);
+            res.body.result.should.eql(["foo234567890","foo","foo123435366","foo34534253425234567890"]);
             done();
-            });
           });
         });
       });
     });
 
+    it('should return keys matching to searchKeyword in AllCollections', function(done){
+      database.save();
+      helpers.login('username','password', function(cookie){
+        request(app)
+        .get('/databases/'+database._id+'/keySearch')
+        .send({searchKeyword:'d', selectedCollection:'All Collections'})
+        .set('cookie', cookie)
+        .end(function(err, res){
+          res.body.result.should.eql(['dsafad-db0', 'dsafadf-db0', 'dsaf2-db2','dasfs-db2']);
+          done();
+        });
+      });
+    });
+  });
 
+  describe('GET /databases/:databaseId/keyValue', function(){
+    it('should require user login', function(done){
+      database.save();
+      request(app)
+      .get('/databases/'+database._id+'/keyValue')
+      .expect(401, done);
+    });
+
+    it('should allow only authentic users', function(done){
+      var user2 = new User({
+        firstName: 'Full',
+        lastName: 'Name2',
+        displayName: 'Full Name2',
+        email: 'test2@test.com',
+        username: 'username2',
+        password: 'password2',
+        provider: 'local'
+      });
+      database.save();
+      user2.save(function(err) {
+        helpers.login('username2', 'password2', function(cookie) {
+          request(app)
+          .get('/databases/' + database._id+'/keyValue')
+          .set('cookie',cookie)
+          .expect(403, done);
+        });
+      });
+    });
+
+    it('should return value of the selected key', function(done){
+      database.save();
+      helpers.login('username','password', function(cookie){
+        request(app)
+        .get('/databases/'+database._id+'/keyValue')
+        .set('cookie',cookie)
+        .send({key:'foo', selectedCollection:'db1'})
+        .expect(200)
+        .end(function (error,res) {
+          res.body.value.should.equal('bar');
+          done();
+        });
+      });
+    });
+  });
 
   afterEach(function(done) {
     Database.remove().exec();
