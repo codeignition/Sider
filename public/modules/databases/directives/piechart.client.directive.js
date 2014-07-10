@@ -15,9 +15,9 @@ angular.module('databases')
                var entry = true;
                scope.$watch( function(){
                  if(infoArray.length && namesArray.length && entry ){
-                 var ele = Raphael('pie');
+                 var ele = Raphael('pie', 360, 205);
                  entry=false;
-                 ele.piechart(100,100,100,infoArray,{ legend:namesArray});
+                 ele.piechart(100,100,100,infoArray,{ legend:namesArray, legendothers:'Others', maxSlices:10});
                  }
                  scope.$on('$destroy',function(){
                    ele.remove();
