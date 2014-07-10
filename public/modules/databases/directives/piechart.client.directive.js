@@ -13,9 +13,10 @@ angular.module('databases')
                var infoArray = scope.info;
                var namesArray = scope.names;
                var entry = true;
+               var ele;
                scope.$watch( function(){
                  if(infoArray.length && namesArray.length && entry ){
-                 var ele = Raphael('pie', 360, 205);
+                 ele = Raphael('pie', 360, 205);
                  entry=false;
                  ele.piechart(100,100,100,infoArray,{ legend:namesArray, legendothers:'Others', maxSlices:10});
                  }
