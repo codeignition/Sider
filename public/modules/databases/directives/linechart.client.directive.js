@@ -2,22 +2,30 @@
 
 angular.module('databases')
 .directive('linechart', [
-	function() {
-    var directive = {};
-    directive.restrict = 'E';
-    directive.scope = {
-      mem:'=mem',
-      time:'=time'
-    };
+  function() {
+  var directive = {};
+  directive.restrict = 'E';
+  directive.scope = {
+    mem:'=mem',
+    time:'=time'
+  };
 
-    directive.link = function(scope, element, attrs){
-      scope.$watch( function(){
-        var linePaper = Raphael(500, 500, 1000, 1000);
-        if(scope.time&&scope.mem)linePaper.linechart(100,100,500,500, scope.time, scope.mem,{axis:'0 0 1 1', symbol: 'circle', smooth:false});
-        scope.$on('$destroy', function(){
-          linePaper.remove();
-        });
+  directive.link = function(scope, element, attrs){
+    var timeArray;
+    var memArray;
+    var entry=true;
+    scope.$watch( function(){
+      var timeArray=scope.time;
+      var memArray=scope.mem;
+      if(timeArray&&memArray&&entry){
+        entry=false;
+        var linePaper = Raphael('line');
+        linePaper.linechart(50,10,300,300, timeArray, memArray,{axis:'0 0 1 1', symbol: 'circle', smooth:false});
+      };
+      scope.$on('$destroy', function(){
+        linePaper.remove();
       });
-    };
-		return directive;
-	}]);
+    });
+  };
+  return directive;
+}]);
