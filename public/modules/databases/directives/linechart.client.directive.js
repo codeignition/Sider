@@ -2,22 +2,32 @@
 
 angular.module('databases')
 .directive('linechart', [
-	function() {
-    var directive = {};
-    directive.restrict = 'E';
-    directive.scope = {
-      mem:'=mem',
-      time:'=time'
-    };
+  function() {
+  var directive = {};
+  directive.restrict = 'AE';
+  directive.scope = {
+    mem:'=mem',
+    time:'=time',
+    xmarking:'=xcord'
+  };
 
-    directive.link = function(scope, element, attrs){
-      scope.$watch( function(){
-        var linePaper = Raphael(500, 500, 1000, 1000);
-        if(scope.time&&scope.mem)linePaper.linechart(100,100,500,500, scope.time, scope.mem,{axis:'0 0 1 1', symbol: 'circle', smooth:false});
-        scope.$on('$destroy', function(){
-          linePaper.remove();
-        });
+  directive.link = function(scope, element, attrs){
+    var timeArray;
+    var memArray;
+    var entry=true;
+    scope.$watch( function(){
+      var timeArray=scope.time;
+      var memArray=scope.mem;
+      if(timeArray&&memArray&&entry&&scope.xmarking){
+        entry=false;
+        var linePaper = Raphael(element[0]);
+        linePaper.linechart(50,10,630,300, timeArray, memArray,{axis:'0 0 0 1', symbol: 'circle', smooth:false});
+        Raphael.g.axis(60, 300, 610, null, null, timeArray.length-1, 0, scope.xmarking, linePaper);
+      };
+      scope.$on('$destroy', function(){
+        linePaper.remove();
       });
-    };
-		return directive;
-	}]);
+    });
+  };
+  return directive;
+}]);

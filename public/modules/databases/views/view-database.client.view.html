@@ -29,7 +29,7 @@
       </a>
     </div>
     <div class="col-md-4">
-      <piechart info="dbarray" names="dbnames"><div id="pie"></div></piechart>
+      <div piechart info="dbarray" names="dbnames" style="height:210px; width:360px;"></div>
     </div>
   </div>
   <hr>
@@ -52,8 +52,9 @@
         </div>
       </form>
     </div>
-    <div class="col-md-4">
-      <linechart mem="infodbArr1"  time="infodbArr2"><div></div></linechart>
+    <div class="col-md-8">
+      <h5> Readings in KB </h5>
+      <div linechart mem="infodbArr1"  time="infodbArr2" xcord="timeArr" ></div>
     </div>
   </div>
 </section>

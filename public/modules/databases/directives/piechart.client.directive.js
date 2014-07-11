@@ -4,7 +4,7 @@ angular.module('databases')
 .directive('piechart',
            function(){
              var directive = {};
-             directive.restrict = 'E';
+             directive.restrict = 'AE';
              directive.scope = {
                info: '=info',
                names:'=names'
@@ -16,7 +16,7 @@ angular.module('databases')
                var ele;
                scope.$watch( function(){
                  if(infoArray.length && namesArray.length && entry ){
-                 ele = Raphael('pie', 360, 205);
+                 ele = Raphael(element[0]);
                  entry=false;
                  ele.piechart(100,100,100,infoArray,{ legend:namesArray, legendothers:'Others', maxSlices:10});
                  }

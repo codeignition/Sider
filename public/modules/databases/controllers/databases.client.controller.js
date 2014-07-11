@@ -66,15 +66,20 @@ angular.module('databases').
                  });
 
 
-                 var arr =[];
+                 var infodbarr =[];
+                 var timearr = [];
 
-                 $scope.infodbArr2=[1,2,3,4,5,6,7,8,];
+
+                 $scope.infodbArr2=[0,1,2,3,4,5,6,7,8,9];
 
                  $scope.infodb.$promise.then(function(callback){
                    for(var i in $scope.infodbArr2){
-                     arr[i] = parseInt($scope.infodb[i].content.used_memory);
+                     var j = $scope.infodbArr2.length - 1 - i;
+                     infodbarr[j] = parseInt($scope.infodb[i].content.used_memory)/1024;
+                     timearr[j]=(($scope.infodb[i].timestamp.split('T'))[1].split('.'))[0];
                    }
-                   $scope.infodbArr1 = arr;
+                   $scope.timeArr=timearr;
+                   $scope.infodbArr1 = infodbarr;
                  });
 
                  $scope.redisinfo = getinfo.get({
