@@ -20,7 +20,7 @@ module.exports = function(app) {
   .get(users.requiresLogin, databases.hasAuthorization, databases.infos);
 
   app.route('/databases/:databaseId/execute')
-  .get(users.requiresLogin, databases.hasAuthorization, databases.execute);
+  .get(users.requiresLogin, databases.hasAuthorization,databases.setWorkingdb, databases.execute);
 
   app.route('/databases/:databaseId/currentCollection')
   .get(users.requiresLogin, databases.hasAuthorization, databases.currentCollection);

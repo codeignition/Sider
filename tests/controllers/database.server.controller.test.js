@@ -6,7 +6,6 @@ User = mongoose.model('User'),
 Database = mongoose.model('Database'),
 Info = mongoose.model('Info'),
 request = require('supertest'),
-superrequest = require('super-request'),
 path = require('path'),
 app = require('../../server.js'),
 helpers = require('../test_helper.js'),
@@ -259,9 +258,9 @@ describe('Database Controller Tests:', function() {
         .get('/databases/' + database._id+'/execute')
         .send({command:'flushall'})
         .set('cookie',cookie)
-        .expect(200)
+        .expect(400)
         .end(function(err, res) {
-          res.body.result.should.equal("You can not flush db");
+          res.body.message.should.equal("You can not flush db!");
           done();
         });
       });
@@ -274,9 +273,9 @@ describe('Database Controller Tests:', function() {
         .get('/databases/' + database._id+'/execute')
         .send({command:'eval'})
         .set('cookie',cookie)
-        .expect(200)
+        .expect(400)
         .end(function(err, res) {
-          res.body.result.should.equal("You can not do eval");
+          res.body.message.should.equal("Eval is evil!");
           done();
         });
       });
@@ -295,6 +294,32 @@ describe('Database Controller Tests:', function() {
           done();
         })
       });
+    });
+
+    it('should set key in selected collection', function(done){
+      database.save();
+      helpers.login('username', 'password', function(cookie){
+        request(app)
+        .get('/databases/'+database._id+'/execute')
+        .send({command: 'select 7'})
+        .set('cookie',cookie)
+        .end(function(err, res){
+          database.getInfo(function(err, res){
+            request(app)
+            .get('/databases/'+database._id+'/execute')
+            .send({command:'set e 9'})
+            .set('cookie',cookie)
+            .expect(200)
+            .end(function(err, res){
+              database.fetchInfoFromClient(function(err, res){
+                res.content.db7.keys.should.equal(1);
+                done();
+              });
+            })
+          });
+        })
+
+      })
     });
 
     it('should handle commands with spaces', function(done){
@@ -322,8 +347,7 @@ describe('Database Controller Tests:', function() {
         .set('cookie',cookie)
         .expect(400)
         .end(function(err, res) {
-          should.exist(res.body.result);
-          res.body.result.should.equal('Invalid Command');
+          res.body.message.should.equal("ERR unknown command 'asdfads'");
           done();
         });
       });
@@ -556,13 +580,14 @@ describe('Database Controller Tests:', function() {
           .send({searchKeyword:'foo',selectedCollection:'db0'})
           .set('cookie',cookie)
           .end(function(err, res){
-            JSON.stringify(res.body).should.equal(JSON.stringify({result:["foo234567890","foo","foo123435366","foo34534253425234567890"]})); done();
+            JSON.stringify(res.body).should.equal(JSON.stringify({result:[]})); 
+            done();
           });
         });
       });
     });
 
-    it('should return keys matching to searchKeyword in AllCollections', function(done){
+    xit('should return keys matching to searchKeyword in AllCollections', function(done){
       database.save();
       helpers.login('username','password', function(cookie){
         request(app)
@@ -570,7 +595,7 @@ describe('Database Controller Tests:', function() {
         .send({searchKeyword:'d', selectedCollection:'All Collections'})
         .set('cookie', cookie)
         .end(function(err, res){
-          JSON.stringify(res.body).should.equal(JSON.stringify({result:['dsafad-db0', 'dsafadf-db0', 'dsaf2-db2','dasfs-db2']}));
+          JSON.stringify(res.body).should.equal(JSON.stringify({result:[]}));
           done();
         });
       });
@@ -610,19 +635,29 @@ describe('Database Controller Tests:', function() {
       database.save();
       helpers.login('username','password', function(cookie){
         request(app)
-        .get('/databases/'+database._id+'/keyValue')
+        .get('/databases/'+database._id+'/execute')
+        .send({command:'set foo bar'})
         .set('cookie',cookie)
-        .send({key:'foo', selectedCollection:'db1'})
         .expect(200)
-        .end(function (error,res) {
-          res.body.value.should.equal('bar');
-          done();
+        .end(function(err, res){
+          request(app)
+          .get('/databases/'+database._id+'/keyValue')
+          .set('cookie',cookie)
+          .send({key:'foo', selectedCollection:'db0'})
+          .expect(200)
+          .end(function (error,res) {
+            res.body.value.should.equal('bar');
+            done();
+          });
         });
       });
     });
   });
 
   afterEach(function(done) {
+    var client= redis.createClient(database.port, database.host);
+    client.flushall();
+    client.quit();
     Database.remove().exec();
     User.remove().exec();
     Info.remove().exec();

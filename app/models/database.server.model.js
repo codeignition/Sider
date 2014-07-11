@@ -7,6 +7,8 @@ require('./info.server.model.js');
 var mongoose = require('mongoose'),
 Info = mongoose.model('Info'),
 redis = require('redis'),
+_=require('lodash'),
+async = require('async'),
 Schema = mongoose.Schema;
 
 /**
@@ -56,25 +58,30 @@ function parseInfo (info) {
   return info;
 }
 
-DatabaseSchema.methods.connectionFactory = function(callback){
+DatabaseSchema.methods.connectionFactory = function( workingdb, callback){
   var client = redis.createClient(this.port, this.host);
-  client.on('error', function(error){ callback(error) });
-  client.on('connect', function(){ callback(null, client); });
+  client.on('error', function(error){ callback(error, null) });
+  client.on('connect', function(){
+    client.send_command('select', [workingdb], function(error, response){
+      if(error) return callback(error, null);
+      callback(null, client);
+    });
+  });
 };
 
 function commandAllowed(command) {
-  if(/^flush*/.test(command))
-    return new Error('You can not flush db!');
-  else if(/^eval*/.test(command))
-    return new Error('Eval is evil!');
-  return null;
+  if (/^flush*/.test(command))
+return new Error('You can not flush db!');
+else if(/^eval*/.test(command))
+return new Error('Eval is evil!');
+return null;
 }
 
-DatabaseSchema.methods.execute = function(command, callback){
-  var error = commandAllowed(command)
+DatabaseSchema.methods.execute = function(command, workingdb , callback){
+  var error = commandAllowed(command);
   if(error) return callback(error, null);
   command = command.split(' ');
-  this.connectionFactory(function(error, client){
+  this.connectionFactory( workingdb, function(error, client){
     if(error) return callback(error);
     client.send_command(command[0],command.splice(1),function(error, response){
       callback(error, response);
@@ -85,10 +92,8 @@ DatabaseSchema.methods.execute = function(command, callback){
 
 DatabaseSchema.methods.fetchInfoFromClient = function(callback){
   var _this = this;
-  var client = redis.createClient(_this.port, _this.host);
-  client.on('error', function(error){console.log(error); client.quit(); });
-  client.on('connect', function(){
-    client.info(function(){
+  _this.connectionFactory(0,function(error, client){
+    _this.execute('info',0,function(){
       var info = new Info({
         database: _this,
         content:  parseInfo(client.server_info)
@@ -96,11 +101,9 @@ DatabaseSchema.methods.fetchInfoFromClient = function(callback){
       info.save(function(err){
         callback(err, info);
       });
-      client.quit();
     });
   });
 };
-
 
 DatabaseSchema.methods.getInfo = function(callback){
   var _this = this;
@@ -114,5 +117,32 @@ DatabaseSchema.methods.getInfo = function(callback){
   });
 };
 
+DatabaseSchema.methods.searchCollection = function(searchKeyword, selectedCollection, callback){
+  this.execute('keys '+searchKeyword+'*', selectedCollection, callback);
+};
+
+DatabaseSchema.methods.getCollectionsWithKeys = function(callback){
+  var collections=[];
+  this.getInfo(function(error, response){
+    if(error) return callback(error);
+    for(var key in response.content){
+      if(/^db[0-9]*$/.test(key)) collections.push(key.split('b')[1]);
+    }
+    callback(null, collections);
+  });
+}
+
+DatabaseSchema.methods.searchAllCollections = function(searchKeyword, callback){
+  var _this = this;
+  var matchedKeys = [];
+  this.getCollectionsWithKeys(function(error, collections){
+    async.map(collections, function(collection, _callback) {
+      _this.searchCollection(searchKeyword, collection, _callback);
+    }, function(error, result) {
+      if(error) return callback(error);
+      callback(null,_.zipObject(collections,result));
+    });
+  });
+};
 
 mongoose.model('Database', DatabaseSchema);

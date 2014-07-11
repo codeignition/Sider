@@ -80,7 +80,7 @@ describe('Database Model Unit Tests:', function() {
   describe('Method execute', function(){
     it('should return command result', function(done){
       database.save();
-      database.execute('select 1', function(err, res){
+      database.execute('select 1',0 ,function(err, res){
         res.should.equal('OK');
         done();
       });
@@ -88,11 +88,11 @@ describe('Database Model Unit Tests:', function() {
 
     it('should disable flush,eval commands', function(done){
       database.save();
-      database.execute('flushdb',function(err, res){
+      database.execute('flushdb',0,function(err, res){
         should.exist(err);
         err.message.should.equal('You can not flush db!');
       });
-      database.execute('eval', function(err, res){
+      database.execute('eval',0, function(err, res){
         should.exist(err);
         err.message.should.equal('Eval is evil!');
         done();
@@ -101,7 +101,7 @@ describe('Database Model Unit Tests:', function() {
 
     it('should give error for invalid commands', function(done){
       database.save();
-      database.execute('dadsf',function(err, res){
+      database.execute('dadsf',0,function(err, res){
         should.exist(err);
         done();
       });
@@ -109,27 +109,27 @@ describe('Database Model Unit Tests:', function() {
   });
 
   describe('Method connectionFactory',function () {
-   it('should create client', function(done){
-    database.save();
-    database.connectionFactory(function(error, client){
-      should.exist(client);
-      done();
+    it('should create client', function(done){
+      database.save();
+      database.connectionFactory(0,function(error, client){
+        should.exist(client);
+        done();
+      });
     });
-   });
 
-   it('should give error when tries to connect to an unavailable redis', function(done){
-    var db = new Database({
-      name: 'New DB',
-      host: '1.1.1.1',
-      port: 1000,
-      user: user
+    it('should give error when tries to connect to an unavailable redis', function(done){
+      var db = new Database({
+        name: 'New DB',
+        host: '1.1.1.1',
+        port: 1000,
+        user: user
+      });
+      db.save();
+      db.connectionFactory(0,function (error, client) {
+        should.exist(error);
+        done();
+      })
     });
-    db.save();
-    db.connectionFactory(function (error, client) {
-      should.exist(error);
-      done();
-    })
-   });
 
   });
   describe('#fetchInfoFromClient',function(){
@@ -198,6 +198,60 @@ describe('Database Model Unit Tests:', function() {
     });
   });
 
+  describe('Method searchCollection', function(){
+    it('should return keys matching to searchKeyword in selectedCollection', function(done){
+      database.searchCollection('foo', '6', function(error, response){
+        var client = redis.createClient(database.port, database.host);
+        client.select(6);
+        client.send_command('keys',['*'], function(error, result){
+          var matchedKeys =[];
+          var keys = result;
+          for( var j=0; j<keys.length ; j++){
+            if((new RegExp('^foo')).test(keys[j])){
+              matchedKeys.push(keys[j]);
+            }
+          }
+          JSON.stringify(response).should.equal(JSON.stringify(matchedKeys));
+          done();
+        });
+      });
+    });
+  });
+
+  describe('Method searchAllCollections', function(){
+    xit('should return keys matching to searchKeyword in All Collections', function(done){
+      database.save();
+      database.searchAllCollections('foo', function(error, response){
+        var client = redis.createClient(database.port, database.host);
+        var info;
+        var collections=[];
+        var searchResult={};
+        client.info(function(){
+          info= client.server_info;
+          for( var key in info){
+            if(/^db[0-9]*$/.test(key)){
+              key = key.split('b');
+              collections.push(key[1]);
+            }
+          }
+          var count=0;
+          for(var i =0; i<collections.length; i++){
+            var matchedKeys=[];
+            client.select(collections[i]);
+            client.send_command('keys',['foo*'], function(error, result){
+              searchResult[collections[count]]=result;
+              console.log(searchResult);
+            count++;
+            if(count===collections.length){
+              JSON.stringify(response).should.equal(JSON.stringify(searchResult));
+              done();
+            }
+            });
+          }
+        });
+      });
+    });
+  });
 
   afterEach(function(done) {
     Database.remove().exec();

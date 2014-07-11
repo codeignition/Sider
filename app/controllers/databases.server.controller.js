@@ -30,9 +30,9 @@ var getErrorMessage = function(err) {
 exports.create = function(req, res) {
   var database = new Database(req.body);
   database.user = req.user;
-
   database.save(function(err) {
     if (err) {
+      console.log(err);
       return res.send(400, {
         message: getErrorMessage(err)
       });
@@ -66,42 +66,22 @@ exports.currentCollection = function(req,res){
   res.json({workingdb:req.session.workingdb});
 };
 
+exports.setWorkingdb = function(req, res, next){
+  if(/^select*/.test(req.param('command')))
+    req.session.workingdb=req.param('command').split(' ')[1];
+  else if(!req.session.workingdb)
+    req.session.workingdb=0;
+  next();
+};
+
 exports.execute = function(req,res){
-  if(/^flush*/.test(req.param('command'))){
-res.json({result:'You can not flush db',workingdb:req.session.workingdb});
-  }
-  else if(/^eval*/.test(req.param('command'))){
-res.json({result: 'You can not do eval',workingdb:req.session.workingdb});
-  }
-  else if(/^select*/.test(req.param('command'))){
-var command = req.param('command').split(' ');
-req.session.workingdb=command[1];
-var client = redis.createClient(req.database.port, req.database.host);
-client.send_command(command[0],command.splice(1), function( error, result){
-  if(error){
-    return res.send(400, {result: 'Invalid Command',workingdb:req.session.workingdb});
-  } else {
-    res.json({result: result,workingdb:req.session.workingdb});
-  }
-});
-  }
-  else{
-    if(req.session.workingdb){
-      var client = redis.createClient(req.database.port, req.database.host);
-      client.select(req.session.workingdb);
-    }
-    else{
-      var client = redis.createClient(req.database.port, req.database.host);
-    }
-    var command = req.param('command').split(' ');
-    client.send_command(command[0],command.splice(1), function( error, result){
-      if(error){
-        return res.send(400, {result: 'Invalid Command',workingdb:req.session.workingdb });
-      } else {
-        res.json({result: result,workingdb:req.session.workingdb});
-      }
-    });
-  }
+  var command = req.param('command');
+  req.database.execute(command, req.session.workingdb, function(error, response){
+    if(error)
+      res.send(400, {message : error.message});
+    else
+      res.json({result:response, workingdb: req.session.workingdb});
+  });
 };
 
 exports.searchRedis = function(req,res,cb){
