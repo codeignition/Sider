@@ -118,51 +118,6 @@ describe('Database Controller Tests:', function() {
     });
   });
 
-  describe('GET /databases/:id/info', function() {
-    it('should require user to login', function(done) {
-      database.save();
-      request(app)
-      .get('/databases/' + database._id + '/info')
-      .expect(401, done);
-    });
-
-    it('should allow only authurized user', function(done) {
-      var user2 = new User({
-        firstName: 'Full',
-        lastName: 'Name2',
-        displayName: 'Full Name2',
-        email: 'test2@test.com',
-        username: 'username2',
-        password: 'password2',
-        provider: 'local'
-      });
-      database.save();
-      user2.save(function(err) {
-        helpers.login('username2', 'password2', function(cookie) {
-          request(app)
-          .get('/databases/' + database._id + '/info')
-          .set('cookie',cookie)
-          .expect(403, done);
-        });
-      });
-    });
-
-    it('should return redis db info from Info database', function(done){
-      database.save();
-
-      helpers.login('username', 'password', function(cookie) {
-        request(app)
-        .get('/databases/' + database._id + '/info')
-        .set('cookie',cookie)
-        .expect(200)
-        .end(function(err, res) {
-          JSON.stringify(res.body).should.containDeep('keys');
-          done();
-        });
-      });
-    });
-  });
-
   describe('GET /databases/:id', function() {
     it('should require user to login', function(done) {
       database.save();

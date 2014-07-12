@@ -46,13 +46,6 @@ exports.read = function(req, res) {
   res.jsonp(req.database);
 };
 
-exports.info = function(req,res){
-  req.database.getInfo(function(error, data){
-    if (error) return res.send(400, {message : getErrorMessage(error)});
-    else res.jsonp(data.content);
-  });
-};
-
 exports.infos = function(req, res){
   Info.find({database : req.database._id}).sort('-timestamp').limit(10)
   .exec(function(error, data){

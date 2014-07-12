@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('databases').
-  controller('DatabasesController',['$scope', '$stateParams', '$location', 'Authentication','getinfo', 'infoDatabase' , 'getCurrentCollection', 'executeCommand','keySearch', 'Databases','getKeyValue',
-             function($scope, $stateParams, $location, Authentication, getinfo, infoDatabase,  getCurrentCollection, executeCommand, keySearch, Databases, getKeyValue) {
+  controller('DatabasesController',['$scope', '$stateParams', '$location', 'Authentication', 'infoDatabase' , 'getCurrentCollection', 'executeCommand','keySearch', 'Databases','getKeyValue',
+             function($scope, $stateParams, $location, Authentication, infoDatabase,  getCurrentCollection, executeCommand, keySearch, Databases, getKeyValue) {
                $scope.authentication = Authentication;
 
                $scope.create = function() {
@@ -68,11 +68,21 @@ angular.module('databases').
 
                  var infodbarr =[];
                  var timearr = [];
+                 $scope.dbnames=[];
+                 $scope.dbarray=[];
 
 
                  $scope.infodbArr2=[0,1,2,3,4,5,6,7,8,9];
 
                  $scope.infodb.$promise.then(function(callback){
+                   $scope.redisinfo=$scope.infodb[0].content;
+                   angular.forEach($scope.redisinfo, function( value, key ) {
+                     if(/^db[0-9]*$/.test(key)){
+                       $scope.collections.push(key);
+                       $scope.dbnames.push(key);
+                       $scope.dbarray.push($scope.redisinfo[key].keys);
+                     }
+                   });
                    for(var i in $scope.infodbArr2){
                      var j = $scope.infodbArr2.length - 1 - i;
                      infodbarr[j] = parseInt($scope.infodb[i].content.used_memory)/1024;
@@ -82,23 +92,8 @@ angular.module('databases').
                    $scope.infodbArr1 = infodbarr;
                  });
 
-                 $scope.redisinfo = getinfo.get({
-                   databaseId: $stateParams.databaseId
-                 });
-
-                 $scope.dbnames=[];
-                 $scope.dbarray=[];
                  $scope.collections=['All Collections'];
 
-                 $scope.redisinfo.$promise.then(function(data){
-                   angular.forEach($scope.redisinfo, function( value, key ) {
-                     if(/^db[0-9]*$/.test(key)){
-                       $scope.collections.push(key);
-                       $scope.dbnames.push(key);
-                       $scope.dbarray.push($scope.redisinfo[key].keys);
-                     }
-                   });
-                 });
 
                  $scope.selectedCollection = 'All Collections';
 

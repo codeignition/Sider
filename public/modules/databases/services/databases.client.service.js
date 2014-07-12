@@ -11,16 +11,6 @@ angular.module('databases')
            });
          }
 ])
-.factory('getinfo', ['$resource',
-         function($resource) {
-           return $resource('databases/:databaseId/info', { databaseId: '@_id'
-           }, {
-             info: {
-               method: 'GET'
-             }
-           });
-         }
-])
 .factory('infoDatabase',['$resource',
          function($resource){
            return $resource('databases/:databaseId/infos',{databaseId: '@_id'
@@ -70,17 +60,6 @@ angular.module('databases')
              execute:{
                method: 'GET',
                parmas: {command:true}
-             }
-           });
-         }
-])
-.factory('infoDatabase',['$resource',
-         function($resource){
-           return $resource('databases/:databaseId/infos',{databaseId: '@_id'
-           },{
-             infos:{
-               method: 'GET',
-               isArray: true
              }
            });
          }
