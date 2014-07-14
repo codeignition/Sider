@@ -41,7 +41,7 @@
             <label class="control-label" for="host">redis@{{database.host}}:{{database.port}}[{{consoledb.workingdb}}]</label>
             <input type="text" data-ng-model="userCommand" placeholder="Enter Command" required>
           </div>
-          <div data-ng-show="!consoledb.workingdb">
+          <div data-ng-hide="consoledb.workingdb">
             <label class="control-label" for="host">redis@{{database.host}}:{{database.port}}</label>
             <input type="text" data-ng-model="userCommand" placeholder="Enter Command" required>
           </div>
