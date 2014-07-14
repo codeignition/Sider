@@ -256,7 +256,7 @@ describe('Database Controller Tests:', function() {
       helpers.login('username', 'password', function(cookie){
         request(app)
         .get('/databases/'+database._id+'/execute')
-        .send({command: 'select 7'})
+        .send({command: 'select 9'})
         .set('cookie',cookie)
         .end(function(err, res){
           database.getInfo(function(err, res){
@@ -267,7 +267,7 @@ describe('Database Controller Tests:', function() {
             .expect(200)
             .end(function(err, res){
               database.fetchInfoFromClient(function(err, res){
-                res.content.db7.keys.should.equal(1);
+                res.content.db9.keys.should.equal(1);
                 done();
               });
             })
@@ -535,14 +535,19 @@ describe('Database Controller Tests:', function() {
           .send({searchKeyword:'foo',selectedCollection:'db0'})
           .set('cookie',cookie)
           .end(function(err, res){
-            JSON.stringify(res.body).should.equal(JSON.stringify({result:[]})); 
-            done();
+            var client=redis.createClient(database.port, database.host);
+            client.select(0);
+            client.send_command('keys',['foo*'],function(error, response){
+              JSON.stringify(res.body).should.equal(JSON.stringify({result:response}));
+              client.quit();
+              done();
+            });
           });
         });
       });
     });
 
-    xit('should return keys matching to searchKeyword in AllCollections', function(done){
+    it('should return keys matching to searchKeyword in AllCollections', function(done){
       database.save();
       helpers.login('username','password', function(cookie){
         request(app)
@@ -550,13 +555,36 @@ describe('Database Controller Tests:', function() {
         .send({searchKeyword:'d', selectedCollection:'All Collections'})
         .set('cookie', cookie)
         .end(function(err, res){
-          JSON.stringify(res.body).should.equal(JSON.stringify({result:[]}));
-          done();
+          var client = redis.createClient(database.port, database.host);
+          var info;
+          var collections=[];
+          var searchResult={};
+          client.info(function(){
+            info= client.server_info;
+            for( var key in info){
+              if(/^db[0-9]*$/.test(key)){
+                key = key.split('b');
+                collections.push(key[1]);
+              }
+            }
+            var count=0;
+            for(var i =0; i<collections.length; i++){
+              var matchedKeys=[];
+              client.select(collections[i]);
+              client.send_command('keys',['d*'], function(error, result){
+                searchResult[collections[count]]=result;
+                count++;
+                if(count===collections.length){
+                  JSON.stringify(res.body.result).should.equal(JSON.stringify(searchResult));
+                  done();
+                }
+              });
+            }
+          });
         });
       });
     });
   });
-
   describe('GET /databases/:databaseId/keyValue', function(){
     it('should require user login', function(done){
       database.save();
@@ -591,18 +619,25 @@ describe('Database Controller Tests:', function() {
       helpers.login('username','password', function(cookie){
         request(app)
         .get('/databases/'+database._id+'/execute')
-        .send({command:'set foo bar'})
+        .send({command:'select 0'})
         .set('cookie',cookie)
         .expect(200)
-        .end(function(err, res){
+        .end(function(){
           request(app)
-          .get('/databases/'+database._id+'/keyValue')
+          .get('/databases/'+database._id+'/execute')
+          .send({command:'set foo bar'})
           .set('cookie',cookie)
-          .send({key:'foo', selectedCollection:'db0'})
           .expect(200)
-          .end(function (error,res) {
-            res.body.value.should.equal('bar');
-            done();
+          .end(function(err, res){
+            request(app)
+            .get('/databases/'+database._id+'/keyValue')
+            .set('cookie',cookie)
+            .send({key:'foo', selectedCollection:'db0'})
+            .expect(200)
+            .end(function (error,res) {
+              res.body.value.should.equal('bar');
+              done();
+            });
           });
         });
       });
@@ -611,7 +646,8 @@ describe('Database Controller Tests:', function() {
 
   afterEach(function(done) {
     var client= redis.createClient(database.port, database.host);
-    client.flushall();
+    client.select(9);
+    client.flushdb();
     client.quit();
     Database.remove().exec();
     User.remove().exec();

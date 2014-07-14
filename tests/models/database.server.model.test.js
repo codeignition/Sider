@@ -219,7 +219,7 @@ describe('Database Model Unit Tests:', function() {
   });
 
   describe('Method searchAllCollections', function(){
-    xit('should return keys matching to searchKeyword in All Collections', function(done){
+    it('should return keys matching to searchKeyword in All Collections', function(done){
       database.save();
       database.searchAllCollections('foo', function(error, response){
         var client = redis.createClient(database.port, database.host);
@@ -240,7 +240,6 @@ describe('Database Model Unit Tests:', function() {
             client.select(collections[i]);
             client.send_command('keys',['foo*'], function(error, result){
               searchResult[collections[count]]=result;
-              console.log(searchResult);
             count++;
             if(count===collections.length){
               JSON.stringify(response).should.equal(JSON.stringify(searchResult));
